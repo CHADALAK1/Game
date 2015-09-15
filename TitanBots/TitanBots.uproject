@@ -1,13 +1,16 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.8",
+	"EngineAssociation": "4.9",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "TitanBots",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	]
 }
