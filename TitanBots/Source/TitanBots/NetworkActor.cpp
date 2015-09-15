@@ -19,7 +19,7 @@ void ANetworkActor::BeginPlay()
 	Super::BeginPlay();
     
     //IP = 127.0.0.1, Port = 8890 for my Python test case
-    if( ! StartTCPReceiver("RamaSocketListener", "127.0.0.1", 8890))
+    if( ! StartTCPReceiver("RamaSocketListener", "127.0.0.1", 7000))
     {
         //UE_LOG  "TCP Socket Listener Created!"
         return;
@@ -92,7 +92,7 @@ FSocket* ANetworkActor::CreateTCPConnectionListener(const FString& YourChosenSoc
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     //Create Socket
-    FIPv4Endpoint Endpoint(FIPv4Address(127, 0, 0, 1), 7000);
+	FIPv4Endpoint Endpoint(FIPv4Address(IP4Nums[0], IP4Nums[1], IP4Nums[2], IP4Nums[3]), ThePort);
     FSocket* ListenSocket = FTcpSocketBuilder(*YourChosenSocketName)
     .AsReusable()
     .BoundToEndpoint(Endpoint)
@@ -101,46 +101,55 @@ FSocket* ANetworkActor::CreateTCPConnectionListener(const FString& YourChosenSoc
     //Set Buffer Size
     int32 NewSize = 0;
     ListenSocket->SetReceiveBufferSize(ReceiveBufferSize, NewSize);
-    
     //Done!
     return ListenSocket;
 }
 //Rama's TCP Connection Listener
 void ANetworkActor::TCPConnectionListener()
 {
+
     //~~~~~~~~~~~~~
-    if(!ListenerSocket) return;
+	if (!ListenerSocket)
+	{
+		return;
+	}
     //~~~~~~~~~~~~~
     
     //Remote address
     TSharedRef<FInternetAddr> RemoteAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+	FIPv4Address ip;
+	FString address = TEXT("127.0.0.1");
+	FIPv4Address::Parse(address, ip);
+	RemoteAddress->SetIp(ip.GetValue());
+	RemoteAddress->SetPort(7000);
     bool Pending;
-    
+
     // handle incoming connections
-    if (ListenerSocket->HasPendingConnection(Pending) && Pending)
+    if (ListenerSocket->HasPendingConnection(Pending))
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //Already have a Connection? destroy previous
-        if(ConnectionSocket)
-        {
-            ConnectionSocket->Close();
-            ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ConnectionSocket);
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
-        //New Connection receive!
-        ConnectionSocket = ListenerSocket->Accept(*RemoteAddress, TEXT("RamaTCP Received Socket Connection"));
-        
-        if (ConnectionSocket != NULL)
-        {
-            //Global cache of current Remote Address
-            RemoteAddressForConnection = FIPv4Endpoint(RemoteAddress);
-            
-            //UE_LOG "Accepted Connection! WOOOHOOOO!!!";
-            
-            //can thread this too
-            GetWorldTimerManager().SetTimer(Timer02,this,&ANetworkActor::TCPSocketListener, 0.01, true);
-        }
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//Already have a Connection? destroy previous
+		if (ConnectionSocket)
+		{
+			ConnectionSocket->Close();
+			ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ConnectionSocket);
+		}
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//New Connection receive!
+		ConnectionSocket = ListenerSocket->Accept(*RemoteAddress, TEXT("RamaTCP Received Socket Connection"));
+
+		if (ConnectionSocket != NULL)
+		{
+			
+			//Global cache of current Remote Address
+			RemoteAddressForConnection = FIPv4Endpoint(RemoteAddress);
+
+			//UE_LOG "Accepted Connection! WOOOHOOOO!!!";
+
+			//can thread this too
+			GetWorldTimerManager().SetTimer(Timer02, this, &ANetworkActor::TCPSocketListener, 0.01, true);
+		}
+       
     }
 }
 
