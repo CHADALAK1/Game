@@ -3,6 +3,7 @@
 #include "TitanBots.h"
 #include "TitanBotsGameMode.h"
 #include "TitanBotsCharacter.h"
+#include "TitanBotsPlayerController.h"
 
 ATitanBotsGameMode::ATitanBotsGameMode()
 {
@@ -12,4 +13,5 @@ ATitanBotsGameMode::ATitanBotsGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+	PlayerControllerClass = ATitanBotsPlayerController::StaticClass();
 }
