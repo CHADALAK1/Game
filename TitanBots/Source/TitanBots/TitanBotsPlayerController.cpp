@@ -9,122 +9,42 @@ void ATitanBotsPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//IP = 127.0.0.1, Port = 8890 for my Python test case
-	if (!StartTCPReceiver("RamaSocketListener", "127.0.0.1", 7000))
-	{
-		//UE_LOG  "TCP Socket Listener Created!"
-		return;
-	}
+	TCPConnectionListener();
 }
 
 
-//Rama's Start TCP Receiver
-bool ATitanBotsPlayerController::StartTCPReceiver(
-	const FString& YourChosenSocketName,
-	const FString& TheIP,
-	const int32 ThePort
-	){
-	//Rama's CreateTCPConnectionListener
-	ListenerSocket = CreateTCPConnectionListener(YourChosenSocketName, TheIP, ThePort);
-
-	//Not created?
-	if (!ListenerSocket)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("StartTCPReceiver>> Listen socket could not be created! ~> %s %d"), *TheIP, ThePort));
-		return false;
-	}
-
-	//Start the Listener! //thread this eventually
-	GetWorldTimerManager().SetTimer(Timer01, this, &ATitanBotsPlayerController::TCPConnectionListener, 0.01, true);
-
-	return true;
-}
-//Format IP String as Number Parts
-bool ATitanBotsPlayerController::FormatIP4ToNumber(const FString& TheIP, uint8(&Out)[4])
-{
-	//IP Formatting
-	TheIP.Replace(TEXT(" "), TEXT(""));
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	//						   IP 4 Parts
-
-	//String Parts
-	TArray<FString> Parts;
-	TheIP.ParseIntoArray(Parts, TEXT("."), true);
-	if (Parts.Num() != 4)
-		return false;
-
-	//String to Number Parts
-	for (int32 i = 0; i < 4; ++i)
-	{
-		Out[i] = FCString::Atoi(*Parts[i]);
-	}
-
-	return true;
-}
-//Rama's Create TCP Connection Listener
-FSocket* ATitanBotsPlayerController::CreateTCPConnectionListener(const FString& YourChosenSocketName, const FString& TheIP, const int32 ThePort, const int32 ReceiveBufferSize)
-{
-	uint8 IP4Nums[4];
-	if (!FormatIP4ToNumber(TheIP, IP4Nums))
-	{
-		return false;
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	//Create Socket
-	FIPv4Endpoint Endpoint(FIPv4Address(IP4Nums[0], IP4Nums[1], IP4Nums[2], IP4Nums[3]), ThePort);
-	FSocket* ListenSocket = FTcpSocketBuilder(*YourChosenSocketName)
-		.AsNonBlocking()
-		.AsReusable()
-		.BoundToEndpoint(Endpoint)
-		.Listening(8);
-
-	//Set Buffer Size
-	int32 NewSize = 0;
-	ListenSocket->SetReceiveBufferSize(ReceiveBufferSize, NewSize);
-	//Done!
-	return ListenSocket;
-}
-//Rama's TCP Connection Listener
+//TCP Connection Listener
 void ATitanBotsPlayerController::TCPConnectionListener()
 {
 
 	//~~~~~~~~~~~~~
-	if (!ListenerSocket)
-	{
-		return;
-	}
+	//if (!ListenerSocket)
+	//{
+	//	return;
+	//}
 	//~~~~~~~~~~~~~
+	ConnectionSocket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
 
 	//Remote address
 	TSharedRef<FInternetAddr> RemoteAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
-	bool Pending;
+	FIPv4Address ip;
+	FString address = TEXT("127.0.0.1");
+	FIPv4Address::Parse(address, ip);
+	RemoteAddress->SetIp(ip.GetValue());
+	RemoteAddress->SetPort(7000);
+	bool Pending = ConnectionSocket->Connect(*RemoteAddress);
 
 	// handle incoming connections
-	if (ListenerSocket->HasPendingConnection(Pending))
+	if (Pending)
 	{
-
+		GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, "OH YEA!");
 		ClientMessage("Hello");
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//Already have a Connection? destroy previous
-		if (ConnectionSocket)
-		{
-			ConnectionSocket->Close();
-			ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ConnectionSocket);
-		}
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//New Connection receive!
-		ConnectionSocket = ListenerSocket->Accept(*RemoteAddress, TEXT("RamaTCP Received Socket Connection"));
 
 		if (ConnectionSocket != NULL)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "OH HAI");
+			GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, "Socket Connected");
 			//Global cache of current Remote Address
 			RemoteAddressForConnection = FIPv4Endpoint(RemoteAddress);
-
-			//UE_LOG "Accepted Connection! WOOOHOOOO!!!";
 
 			//can thread this too
 			GetWorldTimerManager().SetTimer(Timer02, this, &ATitanBotsPlayerController::TCPSocketListener, 0.01, true);
@@ -133,7 +53,7 @@ void ATitanBotsPlayerController::TCPConnectionListener()
 	}
 }
 
-//Rama's String From Binary Array
+
 //This function requires
 //		#include <string>
 FString ATitanBotsPlayerController::StringFromBinaryArray(const TArray<uint8>& BinaryArray)
@@ -143,7 +63,7 @@ FString ATitanBotsPlayerController::StringFromBinaryArray(const TArray<uint8>& B
 	return FString(cstr.c_str());
 }
 
-//Rama's TCP Socket Listener
+
 void ATitanBotsPlayerController::TCPSocketListener()
 {
 	//~~~~~~~~~~~~~
@@ -162,7 +82,7 @@ void ATitanBotsPlayerController::TCPSocketListener()
 		int32 Read = 0;
 		ConnectionSocket->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
 
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Data Read! %d"), ReceivedData.Num()));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Data Read! %d"), ReceivedData.Num()));
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -176,10 +96,10 @@ void ATitanBotsPlayerController::TCPSocketListener()
 
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	//						Rama's String From Binary Array
+	//						String From Binary Array
 	const FString ReceivedUE4String = StringFromBinaryArray(ReceivedData);
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
+	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
 }
