@@ -2,6 +2,7 @@
 
 #include "TitanBots.h"
 #include <string>
+#include "TitanBotsCharacter.h"
 #include "TitanBotsPlayerController.h"
 
 
@@ -100,6 +101,9 @@ void ATitanBotsPlayerController::TCPSocketListener()
 	const FString ReceivedUE4String = StringFromBinaryArray(ReceivedData);
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	ATitanBotsCharacter *Char = (ATitanBotsCharacter*)this->GetControlledPawn();
+
+	Char->CharacterMeshID = ReceivedUE4String;
 
 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
 }
