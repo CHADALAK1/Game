@@ -14,4 +14,15 @@ ATitanBotsGameMode::ATitanBotsGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 	PlayerControllerClass = ATitanBotsPlayerController::StaticClass();
+
+	bool bIsNFC = false;
+
+	if (!bIsNFC)
+	{
+		FPlatformProcess::CreateProc(TEXT("C:\\Users\\CHADALAK\\Desktop\\NFCPlugin.exe"), nullptr, true, false, false, nullptr, 0, nullptr, nullptr);
+	}
+	else
+	{
+
+	}
 }

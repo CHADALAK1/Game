@@ -2,6 +2,7 @@
 
 #include "TitanBots.h"
 #include <string>
+#include <cstdlib>
 #include "TitanBotsCharacter.h"
 #include "TitanBotsPlayerController.h"
 
@@ -107,3 +108,4 @@ void ATitanBotsPlayerController::TCPSocketListener()
 
 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
