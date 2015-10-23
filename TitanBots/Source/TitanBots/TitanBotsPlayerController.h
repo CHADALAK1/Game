@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Networking.h"
 #include "Sockets.h"
+#include "TitanBotsCharacter.h"
 #include "TitanBotsPlayerController.generated.h"
 
 /**
@@ -18,37 +19,33 @@ class TITANBOTS_API ATitanBotsPlayerController : public APlayerController
 	
 public:
 
+	//Constructor
+	ATitanBotsPlayerController();
+
+	//Light Character class Declaration
+	TSubclassOf<ATitanBotsCharacter> LightChar;
+
+	//Medium Character Class Declaration
+	TSubclassOf<ATitanBotsCharacter> MediumChar;
+
 	virtual void BeginPlay() override;
 
 	FTimerHandle Timer01;
 	FTimerHandle Timer02;
 
-	FSocket* ListenerSocket;
 	FSocket* ConnectionSocket;
 	FIPv4Endpoint RemoteAddressForConnection;
 
-	bool StartTCPReceiver(
-		const FString& YourChosenSocketName,
-		const FString& TheIP,
-		const int32 ThePort
-		);
-
-	FSocket* CreateTCPConnectionListener(
-		const FString& YourChosenSocketName,
-		const FString& TheIP,
-		const int32 ThePort,
-		const int32 ReceiveBufferSize = 2 * 1024 * 1024
-		);
 
 	//Timer functions, could be threads
-	void TCPConnectionListener(); 	//can thread this eventually
-	void TCPSocketListener();		//can thread this eventually
+	void TCPConnectionListener(); 	
+	void TCPSocketListener();		
+
+	//Checks the String information from the NFC
+	void NFCIDCheck(FString ID);
 
 
-	//Format String IP4 to number array
-	bool FormatIP4ToNumber(const FString& TheIP, uint8(&Out)[4]);
-
-	//Rama's StringFromBinaryArray
+	//Converts Binary Array into a String (VERY CRUCIAL)
 	FString StringFromBinaryArray(const TArray<uint8>& BinaryArray);
 	
 };

@@ -15,14 +15,12 @@ ATitanBotsGameMode::ATitanBotsGameMode()
 	}
 	PlayerControllerClass = ATitanBotsPlayerController::StaticClass();
 
-	bool bIsNFC = false;
+	Handle1 = FPlatformProcess::CreateProc(TEXT("C:\\Temp\\NFCPlugin.exe"), nullptr, true, false, false, nullptr, 0, nullptr, nullptr);
 
-	if (!bIsNFC)
-	{
-		FPlatformProcess::CreateProc(TEXT("C:\\Users\\CHADALAK\\Desktop\\NFCPlugin.exe"), nullptr, true, false, false, nullptr, 0, nullptr, nullptr);
-	}
-	else
-	{
+}
 
-	}
+void ATitanBotsGameMode::CloseNFCTech()
+{
+	FPlatformProcess::CloseProc(Handle1);
+	Handle1.Close();
 }

@@ -1,6 +1,7 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 
 #include "TitanBots.h"
+#include "TitanBotsGameMode.h"
 #include "TitanBotsCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,6 +51,7 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	check(InputComponent);
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	InputComponent->BindAction("ExitGame", IE_Pressed, this, &ATitanBotsCharacter::EndGame);
 
 	InputComponent->BindAxis("MoveForward", this, &ATitanBotsCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATitanBotsCharacter::MoveRight);
@@ -65,6 +67,13 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &ATitanBotsCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &ATitanBotsCharacter::TouchStopped);
+}
+
+void ATitanBotsCharacter::EndGame()
+{
+	ATitanBotsGameMode *GM = (ATitanBotsGameMode*)GetWorld()->GetAuthGameMode();
+	GM->CloseNFCTech();
+	GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
 }
 
 

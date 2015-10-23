@@ -3,9 +3,24 @@
 #include "TitanBots.h"
 #include <string>
 #include <cstdlib>
-#include "TitanBotsCharacter.h"
 #include "TitanBotsPlayerController.h"
 
+
+ATitanBotsPlayerController::ATitanBotsPlayerController()
+{
+	static ConstructorHelpers::FObjectFinder<UBlueprint> LightPawnBP(TEXT("Blueprint'/Game/ThirdPerson/Blueprints/Pawns/LightPawn_BP.LightPawn_BP'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> MediumPawnBP(TEXT("Blueprint'/Game/ThirdPerson/Blueprints/ThirdPersonCharacter.ThirdPersonCharacter'"));
+	if (LightPawnBP.Object)
+	{
+		LightChar = (UClass*)LightPawnBP.Object->GeneratedClass;
+	}
+	if (MediumPawnBP.Object)
+	{
+		MediumChar = (UClass*)MediumPawnBP.Object->GeneratedClass;
+	}
+
+
+}
 
 void ATitanBotsPlayerController::BeginPlay()
 {
@@ -19,12 +34,7 @@ void ATitanBotsPlayerController::BeginPlay()
 void ATitanBotsPlayerController::TCPConnectionListener()
 {
 
-	//~~~~~~~~~~~~~
-	//if (!ListenerSocket)
-	//{
-	//	return;
-	//}
-	//~~~~~~~~~~~~~
+	//Create a socket connection to the NFC-Plugin
 	ConnectionSocket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
 
 	//Remote address
@@ -34,21 +44,19 @@ void ATitanBotsPlayerController::TCPConnectionListener()
 	FIPv4Address::Parse(address, ip);
 	RemoteAddress->SetIp(ip.GetValue());
 	RemoteAddress->SetPort(7000);
+
+	//Connect to the 127.0.0.1 7000 Port
 	bool Pending = ConnectionSocket->Connect(*RemoteAddress);
 
-	// handle incoming connections
+	// if we are connected to the port
 	if (Pending)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, "OH YEA!");
-		ClientMessage("Hello");
-
 		if (ConnectionSocket != NULL)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, "Socket Connected");
 			//Global cache of current Remote Address
 			RemoteAddressForConnection = FIPv4Endpoint(RemoteAddress);
 
-			//can thread this too
+			//Make limitless timer to receive FString information
 			GetWorldTimerManager().SetTimer(Timer02, this, &ATitanBotsPlayerController::TCPSocketListener, 0.01, true);
 		}
 
@@ -106,6 +114,43 @@ void ATitanBotsPlayerController::TCPSocketListener()
 
 	Char->CharacterMeshID = ReceivedUE4String;
 
-	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
+
+	NFCIDCheck(ReceivedUE4String);
+}
+
+void ATitanBotsPlayerController::NFCIDCheck(FString ID)
+{
+	ATitanBotsCharacter *Char = (ATitanBotsCharacter*)this->GetControlledPawn();
+	
+	//Trims the unnecessary fat from the NFC String (WILL CHANGE LATER AFTER PROTOTYPE STAGE FOR UPGRADES
+	ID.RemoveAt(0, 13);
+	ID.RemoveAt(5, 17);
+
+	//Displays the NFC String for debugging purposes
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, ID);
+
+	//If we are currently possessing a Character
+	if (Char != NULL)
+	{
+		if (ID.Equals("dc6b0"))
+		{
+			UnPossess();
+			FVector loc = Char->GetActorLocation();
+			FRotator rot = Char->GetActorRotation();
+			Char->Destroy();
+			Char = GetWorld()->SpawnActor<ATitanBotsCharacter>(LightChar, loc,rot);
+			Possess(Char);
+		}
+		if (ID.Equals("3748a"))
+		{
+			UnPossess();
+			FVector loc = Char->GetActorLocation();
+			FRotator rot = Char->GetActorRotation();
+			Char->Destroy();
+			Char = GetWorld()->SpawnActor<ATitanBotsCharacter>(MediumChar, loc, rot);
+			Possess(Char);
+		}
+	}
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              

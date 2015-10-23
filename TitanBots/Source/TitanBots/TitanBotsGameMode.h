@@ -10,6 +10,10 @@ class ATitanBotsGameMode : public AGameMode
 
 public:
 	ATitanBotsGameMode();
+
+	FProcHandle Handle1;
+
+	void CloseNFCTech();
 };
 
 
