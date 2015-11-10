@@ -28,6 +28,13 @@ public:
 	//Medium Character Class Declaration
 	TSubclassOf<ATitanBotsCharacter> MediumChar;
 
+	USkeletalMesh *LightMesh;
+	USkeletalMesh *MediumMesh;
+
+	//Turns on and off the garage menu
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Garage)
+	bool bIsInGarage;
+
 	virtual void BeginPlay() override;
 
 	FTimerHandle Timer01;

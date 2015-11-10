@@ -9,11 +9,15 @@ ATitanBotsGameMode::ATitanBotsGameMode()
 {
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/ThirdPersonCharacter"));
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/ThirdPerson/Blueprints/TBPlayerController_BP"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
-	PlayerControllerClass = ATitanBotsPlayerController::StaticClass();
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		PlayerControllerClass = PlayerControllerBPClass.Class;
+	}
 
 	Handle1 = FPlatformProcess::CreateProc(TEXT("C:\\Temp\\NFCPlugin.exe"), nullptr, true, false, false, nullptr, 0, nullptr, nullptr);
 
