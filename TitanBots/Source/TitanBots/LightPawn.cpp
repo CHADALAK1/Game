@@ -4,5 +4,9 @@
 #include "LightPawn.h"
 
 
+ALightPawn::ALightPawn()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+}
 
 

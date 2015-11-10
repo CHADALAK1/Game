@@ -4,5 +4,8 @@
 #include "HeavyPawn.h"
 
 
-
+AHeavyPawn::AHeavyPawn()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+}
 
