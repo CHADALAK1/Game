@@ -20,6 +20,14 @@ ATitanBotsPlayerController::ATitanBotsPlayerController()
 	{
 		MediumChar = (UClass*)MediumPawnBP.Object->GeneratedClass;
 	}
+	if (LightMeshBP.Object)
+	{
+		LightMesh = LightMeshBP.Object;
+	}
+	if (MediumMeshBP.Object)
+	{
+		MediumMesh = MediumMeshBP.Object;
+	}
 
 
 }
@@ -36,35 +44,32 @@ void ATitanBotsPlayerController::BeginPlay()
 //TCP Connection Listener
 void ATitanBotsPlayerController::TCPConnectionListener()
 {
-	if (bIsInGarage)
+	//Create a socket connection to the NFC-Plugin
+	ConnectionSocket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
+
+	//Remote address
+	TSharedRef<FInternetAddr> RemoteAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+	FIPv4Address ip;
+	FString address = TEXT("127.0.0.1");
+	FIPv4Address::Parse(address, ip);
+	RemoteAddress->SetIp(ip.GetValue());
+	RemoteAddress->SetPort(7000);
+
+	//Connect to the 127.0.0.1 7000 Port
+	bool Pending = ConnectionSocket->Connect(*RemoteAddress);
+
+	// if we are connected to the port
+	if (Pending)
 	{
-		//Create a socket connection to the NFC-Plugin
-		ConnectionSocket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
-
-		//Remote address
-		TSharedRef<FInternetAddr> RemoteAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
-		FIPv4Address ip;
-		FString address = TEXT("127.0.0.1");
-		FIPv4Address::Parse(address, ip);
-		RemoteAddress->SetIp(ip.GetValue());
-		RemoteAddress->SetPort(7000);
-
-		//Connect to the 127.0.0.1 7000 Port
-		bool Pending = ConnectionSocket->Connect(*RemoteAddress);
-
-		// if we are connected to the port
-		if (Pending)
+		if (ConnectionSocket != NULL)
 		{
-			if (ConnectionSocket != NULL)
-			{
-				//Global cache of current Remote Address
-				RemoteAddressForConnection = FIPv4Endpoint(RemoteAddress);
+			//Global cache of current Remote Address
+			RemoteAddressForConnection = FIPv4Endpoint(RemoteAddress);
 
-				//Make limitless timer to receive FString information
-				GetWorldTimerManager().SetTimer(Timer02, this, &ATitanBotsPlayerController::TCPSocketListener, 0.01, true);
-			}
-
+			//Make limitless timer to receive FString information
+			GetWorldTimerManager().SetTimer(Timer02, this, &ATitanBotsPlayerController::TCPSocketListener, 0.01, true);
 		}
+
 	}
 }
 
@@ -81,12 +86,10 @@ FString ATitanBotsPlayerController::StringFromBinaryArray(const TArray<uint8>& B
 
 void ATitanBotsPlayerController::TCPSocketListener()
 {
-	if (bIsInGarage)
-	{
-		//~~~~~~~~~~~~~
-		if (!ConnectionSocket) return;
-		//~~~~~~~~~~~~~
 
+	//~~~~~~~~~~~~~
+	if (!ConnectionSocket) return;
+	//~~~~~~~~~~~~~
 
 		//Binary Array!
 		TArray<uint8> ReceivedData;
@@ -117,26 +120,22 @@ void ATitanBotsPlayerController::TCPSocketListener()
 		const FString ReceivedUE4String = StringFromBinaryArray(ReceivedData);
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		ATitanBotsCharacter *Char = (ATitanBotsCharacter*)this->GetControlledPawn();
-
-		Char->CharacterMeshID = ReceivedUE4String;
-
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
 
-		NFCIDCheck(ReceivedUE4String);
-	}
-	else
+	if (bIsInGarage)
 	{
-		GetWorldTimerManager().ClearTimer(Timer01);
-		GetWorldTimerManager().ClearTimer(Timer02);
+
+		NFCIDCheck(ReceivedUE4String);
 	}
 }
 
 void ATitanBotsPlayerController::NFCIDCheck(FString ID)
 {
-	ATitanBotsCharacter *Char = (ATitanBotsCharacter*)this->GetControlledPawn();
+	//ATitanBotsCharacter *Char = (ATitanBotsCharacter*)this->GetControlledPawn();
+
+	AGaragePawn *Char = (AGaragePawn*)this->GetControlledPawn();
 	
-	//Trims the unnecessary fat from the NFC String (WILL CHANGE LATER AFTER PROTOTYPE STAGE FOR UPGRADES
+	//Trims the unnecessary fat from the NFC String (WILL CHANGE LATER AFTER PROTOTYPE STAGE FOR UPGRADES)
 	ID.RemoveAt(0, 13);
 	ID.RemoveAt(5, 17);
 
@@ -148,6 +147,7 @@ void ATitanBotsPlayerController::NFCIDCheck(FString ID)
 	{
 		if (ID.Equals("dc6b0"))
 		{
+			Char->GetMesh()->SetSkeletalMesh(LightMesh);
 											/*TODO  SPAWN SKELETAL MESH TO PAWN FOR GARAGE SEQUENCE */ 
 			/*
 			UnPossess();
@@ -160,6 +160,7 @@ void ATitanBotsPlayerController::NFCIDCheck(FString ID)
 		}
 		if (ID.Equals("3748a"))
 		{
+			Char->GetMesh()->SetSkeletalMesh(MediumMesh);
 			/*
 			UnPossess();
 			FVector loc = Char->GetActorLocation();

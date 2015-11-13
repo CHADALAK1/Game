@@ -6,6 +6,7 @@
 #include "Networking.h"
 #include "Sockets.h"
 #include "TitanBotsCharacter.h"
+#include "GaragePawn.h"
 #include "TitanBotsPlayerController.generated.h"
 
 /**

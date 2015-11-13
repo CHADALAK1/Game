@@ -26,5 +26,4 @@ ATitanBotsGameMode::ATitanBotsGameMode()
 void ATitanBotsGameMode::CloseNFCTech()
 {
 	FPlatformProcess::CloseProc(Handle1);
-	Handle1.Close();
 }
