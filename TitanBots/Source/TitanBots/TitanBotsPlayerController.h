@@ -12,6 +12,16 @@
 /**
  * 
  */
+
+UENUM(BlueprintType)
+enum ClassType
+{
+	E_None		UMETA(DisplayName = "None"),
+	E_Light		UMETA(DisplayName = "Light"),
+	E_Medium	UMETA(DisplayName = "Medium"),
+	E_Heavy		UMETA(DisplayName = "Heavy")
+};
+
 UCLASS()
 class TITANBOTS_API ATitanBotsPlayerController : public APlayerController
 {
@@ -33,8 +43,11 @@ public:
 	USkeletalMesh *MediumMesh;
 
 	//Turns on and off the garage menu
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Garage)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Garage)
 	bool bIsInGarage;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Garage)
+	TEnumAsByte<ClassType> TypeClass;
 
 	virtual void BeginPlay() override;
 

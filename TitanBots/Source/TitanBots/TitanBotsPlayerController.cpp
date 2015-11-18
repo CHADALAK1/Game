@@ -9,9 +9,9 @@
 ATitanBotsPlayerController::ATitanBotsPlayerController()
 {
 	static ConstructorHelpers::FObjectFinder<UBlueprint> LightPawnBP(TEXT("Blueprint'/Game/ThirdPerson/Blueprints/Pawns/LightPawn_BP.LightPawn_BP'"));
-	static ConstructorHelpers::FObjectFinder<UBlueprint> MediumPawnBP(TEXT("Blueprint'/Game/ThirdPerson/Blueprints/ThirdPersonCharacter.ThirdPersonCharacter'"));
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LightMeshBP(TEXT("SkeletalMesh'/Game/ThirdPerson/Character/Mesh/SK_Mannequin.SK_Mannequin'"));
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MediumMeshBP(TEXT("SkeletalMesh'/Game/ThirdPerson/Character/TheSentinal_Idle_01.TheSentinal_Idle_01'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> MediumPawnBP(TEXT("Blueprint'/Game/ThirdPerson/Blueprints/Pawns/MediumPawn_BP.MediumPawn_BP'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LightMeshBP(TEXT("SkeletalMesh'/Game/ThirdPerson/Character/TheSentinal_Idle_01.TheSentinal_Idle_01'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MediumMeshBP(TEXT("SkeletalMesh'/Game/ThirdPerson/Character/Mesh/SK_Mannequin.SK_Mannequin'"));
 	if (LightPawnBP.Object)
 	{
 		LightChar = (UClass*)LightPawnBP.Object->GeneratedClass;
@@ -28,6 +28,8 @@ ATitanBotsPlayerController::ATitanBotsPlayerController()
 	{
 		MediumMesh = MediumMeshBP.Object;
 	}
+
+	TypeClass = ClassType::E_None;
 
 
 }
@@ -148,6 +150,7 @@ void ATitanBotsPlayerController::NFCIDCheck(FString ID)
 		if (ID.Equals("dc6b0"))
 		{
 			Char->GetMesh()->SetSkeletalMesh(LightMesh);
+			TypeClass = ClassType::E_Light;
 											/*TODO  SPAWN SKELETAL MESH TO PAWN FOR GARAGE SEQUENCE */ 
 			/*
 			UnPossess();
@@ -161,6 +164,7 @@ void ATitanBotsPlayerController::NFCIDCheck(FString ID)
 		if (ID.Equals("3748a"))
 		{
 			Char->GetMesh()->SetSkeletalMesh(MediumMesh);
+			TypeClass = ClassType::E_Medium;
 			/*
 			UnPossess();
 			FVector loc = Char->GetActorLocation();
