@@ -27,3 +27,18 @@ void ATitanBotsGameMode::CloseNFCTech()
 {
 	FPlatformProcess::CloseProc(Handle1);
 }
+
+void ATitanBotsGameMode::Tick(float DeltaSeconds)
+{
+    ATitanBotsPlayerController* PC = (ATitanBotsPlayerController*)GetWorld()->GetFirstPlayerController();
+    ATitanBotsCharacter* Char = (ATitanBotsCharacter*)PC->GetControlledPawn();
+    
+    if(!PC->bIsInGarage)
+    {
+        StartMatch();
+    }
+    else
+    {
+        EndMatch();
+    }
+}

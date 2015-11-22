@@ -37,6 +37,9 @@ ATitanBotsCharacter::ATitanBotsCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->AttachTo(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+    
+    Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
+    Collision->AttachTo(RootComponent);
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -76,6 +79,69 @@ void ATitanBotsCharacter::EndGame()
 	GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
 }
 
+void ATitanBotsCharacter::SetArmor(int32 NewArmor)
+{
+    if(NewArmor >= 0 && NewArmor <=100)
+    {
+        Armor = NewArmor;
+    }
+}
+
+void ATitanBotsCharacter::SetHealth(int32 NewHealth)
+{
+    if(NewHealth >= 0 && NewHealth <=100)
+    {
+        Health = NewHealth;
+    }
+}
+
+void ATitanBotsCharacter::AddHealth(int32 Amount)
+{
+    if((GetHealth() + Amount) < 100)
+    {
+        Health += Amount;
+    }
+    else
+    {
+        Health = 100;
+    }
+}
+
+void ATitanBotsCharacter::DecreaseHealth(int32 Amount)
+{
+    if((GetHealth() - Amount) > 0)
+    {
+        Health -= Amount;
+    }
+    else
+    {
+        Health = 0;
+    }
+}
+
+void ATitanBotsCharacter::AddArmor(int32 Amount)
+{
+    if((GetArmor() + Amount) < 100)
+    {
+        Armor += Amount;
+    }
+    else
+    {
+        Armor = 100;
+    }
+}
+
+void ATitanBotsCharacter::DecreaseArmor(int32 Amount)
+{
+    if((GetArmor() - Amount) > 0)
+    {
+        Armor -= Amount;
+    }
+    else
+    {
+        Armor = 0;
+    }
+}
 
 void ATitanBotsCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {

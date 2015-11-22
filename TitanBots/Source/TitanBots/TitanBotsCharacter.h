@@ -15,6 +15,9 @@ class ATitanBotsCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
+    class UBoxComponent *Collision;
 public:
 	ATitanBotsCharacter();
 
@@ -28,6 +31,25 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ID)
 	FString CharacterMeshID;
+    
+    void SetHealth(int32 NewHealth);
+    
+    void SetArmor(int32 NewArmor);
+    
+    void AddHealth(int32 Amount);
+    
+    void DecreaseHealth(int32 Amount);
+    
+    void AddArmor(int32 Amount);
+    
+    void DecreaseArmor(int32 Amount);
+    
+    
+private:
+    
+    int32 Health;
+    
+    int32 Armor;
 
 protected:
 
@@ -67,5 +89,11 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+    /** Returns Collision subobject **/
+    FORCEINLINE class UBoxComponent* GetCollision() const { return Collision; }
+    /** Gets the Health Value for this Character */
+    FORCEINLINE int32 GetHealth() const { return Health;}
+    /** Gets the Armor Value for this Character */
+    FORCEINLINE int32 GetArmor() const { return Armor; }
 };
 
