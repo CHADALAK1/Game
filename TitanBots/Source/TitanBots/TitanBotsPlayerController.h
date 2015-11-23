@@ -33,13 +33,16 @@ public:
 	//Constructor
 	ATitanBotsPlayerController();
 
-	//Light Character class Declaration
+	/*Light Character class Declaration */
 	TSubclassOf<ATitanBotsCharacter> LightChar;
 
-	//Medium Character Class Declaration
+	/*Medium Character Class Declaration */
 	TSubclassOf<ATitanBotsCharacter> MediumChar;
 
+    /** Light Mesh SkeletalMesh to call in the ConstructorHelper ObjectFinder */
 	USkeletalMesh *LightMesh;
+    
+    /** Medium Mesh SkeletalMesh to call in the ConstructorHelper ObjectFinder */
 	USkeletalMesh *MediumMesh;
 
 	//Turns on and off the garage menu
@@ -54,15 +57,18 @@ public:
 	FTimerHandle Timer01;
 	FTimerHandle Timer02;
 
+    /* Socket to connect to the NFC Plug-In */
 	FSocket* ConnectionSocket;
 	FIPv4Endpoint RemoteAddressForConnection;
 
 
-	//Timer functions, could be threads
-	void TCPConnectionListener(); 	
+	/* Creates Socket and checks for connection to start timer for The Socket Listener */
+	void TCPConnectionListener();
+    
+    /* Keeps listening and decodes the low level string value from the NFC to UE4 */
 	void TCPSocketListener();		
 
-	//Checks the String information from the NFC
+	/*Checks the String information from the NFC */
 	void NFCIDCheck(FString ID);
 
 

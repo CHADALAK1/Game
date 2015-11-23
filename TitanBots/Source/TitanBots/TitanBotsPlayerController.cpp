@@ -37,7 +37,6 @@ ATitanBotsPlayerController::ATitanBotsPlayerController()
 void ATitanBotsPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	bIsInGarage = true;
 
 	TCPConnectionListener();
 }
@@ -89,11 +88,11 @@ FString ATitanBotsPlayerController::StringFromBinaryArray(const TArray<uint8>& B
 void ATitanBotsPlayerController::TCPSocketListener()
 {
 
-	//~~~~~~~~~~~~~
+	///////////////
 	if (!ConnectionSocket) return;
-	//~~~~~~~~~~~~~
+	///////////////
 
-		//Binary Array!
+		//Binary Array
 		TArray<uint8> ReceivedData;
 
 		uint32 Size;
@@ -106,7 +105,6 @@ void ATitanBotsPlayerController::TCPSocketListener()
 
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Data Read! %d"), ReceivedData.Num()));
 		}
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		if (ReceivedData.Num() <= 0)
 		{
@@ -117,10 +115,10 @@ void ATitanBotsPlayerController::TCPSocketListener()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Data Bytes Read ~> %d"), ReceivedData.Num()));
 
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/////////////////////
 		//						String From Binary Array
 		const FString ReceivedUE4String = StringFromBinaryArray(ReceivedData);
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		////////////////////
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("As String Data ~> %s"), *ReceivedUE4String));
 
@@ -133,8 +131,6 @@ void ATitanBotsPlayerController::TCPSocketListener()
 
 void ATitanBotsPlayerController::NFCIDCheck(FString ID)
 {
-	//ATitanBotsCharacter *Char = (ATitanBotsCharacter*)this->GetControlledPawn();
-
 	AGaragePawn *Char = (AGaragePawn*)this->GetControlledPawn();
 	
 	//Trims the unnecessary fat from the NFC String (WILL CHANGE LATER AFTER PROTOTYPE STAGE FOR UPGRADES)
@@ -151,28 +147,11 @@ void ATitanBotsPlayerController::NFCIDCheck(FString ID)
 		{
 			Char->GetMesh()->SetSkeletalMesh(LightMesh);
 			TypeClass = ClassType::E_Light;
-											/*TODO  SPAWN SKELETAL MESH TO PAWN FOR GARAGE SEQUENCE */ 
-			/*
-			UnPossess();
-			FVector loc = Char->GetActorLocation();
-			FRotator rot = Char->GetActorRotation();
-			Char->Destroy();
-			Char = GetWorld()->SpawnActor<ATitanBotsCharacter>(LightChar, loc,rot);
-			Possess(Char);
-			*/
 		}
 		if (ID.Equals("3748a"))
 		{
 			Char->GetMesh()->SetSkeletalMesh(MediumMesh);
 			TypeClass = ClassType::E_Medium;
-			/*
-			UnPossess();
-			FVector loc = Char->GetActorLocation();
-			FRotator rot = Char->GetActorRotation();
-			Char->Destroy();
-			Char = GetWorld()->SpawnActor<ATitanBotsCharacter>(MediumChar, loc, rot);
-			Possess(Char);
-			*/
 		}
 	}
 }

@@ -12,8 +12,11 @@ UCLASS()
 class TITANBOTS_API AEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
-	
-	
-	
+    
+public:
+    
+    AEnemyAIController();
+    
+    virtual void Tick(float DeltaSeconds) override;
 	
 };

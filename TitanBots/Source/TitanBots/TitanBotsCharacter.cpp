@@ -2,6 +2,7 @@
 
 #include "TitanBots.h"
 #include "TitanBotsGameMode.h"
+#include "WeaponProjectile.h"
 #include "TitanBotsCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,6 +41,13 @@ ATitanBotsCharacter::ATitanBotsCharacter()
     
     Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
     Collision->AttachTo(RootComponent);
+    Collision->OnComponentBeginOverlap.AddDynamic(this, &ATitanBotsCharacter::OnEnterCollision);
+    MaxHealth = 100;
+    MaxArmor = 100;
+    
+    Health = 100;
+    Armor = 100;
+    
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -54,6 +62,8 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	check(InputComponent);
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+    InputComponent->BindAction("Action", IE_Pressed, this, &ATitanBotsCharacter::Fire);
+    InputComponent->BindAction("Action", IE_Released, this, &ATitanBotsCharacter::StopFire);
 	InputComponent->BindAction("ExitGame", IE_Pressed, this, &ATitanBotsCharacter::EndGame);
 
 	InputComponent->BindAxis("MoveForward", this, &ATitanBotsCharacter::MoveForward);
@@ -79,9 +89,19 @@ void ATitanBotsCharacter::EndGame()
 	GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
 }
 
+void ATitanBotsCharacter::Fire()
+{
+    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "Fire");
+}
+
+void ATitanBotsCharacter::StopFire()
+{
+    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "StopFire");
+}
+
 void ATitanBotsCharacter::SetArmor(int32 NewArmor)
 {
-    if(NewArmor >= 0 && NewArmor <=100)
+    if(NewArmor >= 0 && NewArmor <= GetMaxArmor())
     {
         Armor = NewArmor;
     }
@@ -89,7 +109,7 @@ void ATitanBotsCharacter::SetArmor(int32 NewArmor)
 
 void ATitanBotsCharacter::SetHealth(int32 NewHealth)
 {
-    if(NewHealth >= 0 && NewHealth <=100)
+    if(NewHealth >= 0 && NewHealth <=GetMaxHealth())
     {
         Health = NewHealth;
     }
@@ -97,7 +117,7 @@ void ATitanBotsCharacter::SetHealth(int32 NewHealth)
 
 void ATitanBotsCharacter::AddHealth(int32 Amount)
 {
-    if((GetHealth() + Amount) < 100)
+    if((GetHealth() + Amount) < GetMaxHealth())
     {
         Health += Amount;
     }
@@ -121,7 +141,7 @@ void ATitanBotsCharacter::DecreaseHealth(int32 Amount)
 
 void ATitanBotsCharacter::AddArmor(int32 Amount)
 {
-    if((GetArmor() + Amount) < 100)
+    if((GetArmor() + Amount) < GetMaxArmor())
     {
         Armor += Amount;
     }
@@ -140,6 +160,50 @@ void ATitanBotsCharacter::DecreaseArmor(int32 Amount)
     else
     {
         Armor = 0;
+    }
+}
+
+void ATitanBotsCharacter::SetMaxHealth(int32 NewMaxHealth)
+{
+    if(NewMaxHealth >= 1)
+    {
+        MaxHealth = NewMaxHealth;
+    }
+    else
+    {
+        MaxHealth = 1;
+    }
+}
+
+void ATitanBotsCharacter::SetMaxArmor(int32 NewMaxArmor)
+{
+    if(NewMaxArmor >= 1)
+    {
+        MaxArmor = NewMaxArmor;
+    }
+    else
+    {
+        MaxArmor = 1;
+    }
+}
+
+float ATitanBotsCharacter::GetHealthPercentage()
+{
+    return FMath::GetRangePct(0.f, MaxHealth, Health);
+}
+
+float ATitanBotsCharacter::GetArmorPercentage()
+{
+    return FMath::GetRangePct(0.f, MaxArmor, Armor);
+}
+
+void ATitanBotsCharacter::OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    AWeaponProjectile* Proj = Cast<AWeaponProjectile>(OtherActor);
+    
+    if(Proj)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "PROJECTILE");
     }
 }
 

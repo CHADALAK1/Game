@@ -7,6 +7,8 @@
 ALightPawn::ALightPawn()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+    SetMaxHealth(100);
+    SetMaxArmor(200);
 }
 
 

@@ -22,20 +22,27 @@ class TITANBOTS_API AWeaponProjectile : public AActor
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UParticleSystemComponent* AuraParticle;
+    
+private:
+    
+    /** Damage count necessary to find out how much damage it does*/
+    int32 DamageAmount;
+    
+    /** Size of the explosion particle on Collision*/
+    int32 ExplosionSize;
 
-public:	
+public:
 	// Sets default values for this actor's properties
 	AWeaponProjectile(const FObjectInitializer& ObjectInitializer);
-
-	/** Damage count necessary to find out how much damage it does*/
-	int32 DamageAmount;
-
-	/** Size of the explosion particle on Collision*/
-	int32 ExplosionSize;
 
 	/** called when projectile hits something */
 	UFUNCTION()
 	virtual void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+    
+    /** Sets the amount for DamageAmount
+     * @param NewAmount  value for the new DamageAmount
+     */
+    void SetDamageAmount(int32 NewAmount);
 
 	/** Returns CollisionComp subobject **/
 	FORCEINLINE class USphereComponent* GetCollisionComp() const { return CollisionComp; }
@@ -43,6 +50,10 @@ public:
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UParticleSystemComponent* GetAuraParticle() const { return AuraParticle; }
+    /** Gets the DamageAmount Variable */
+    FORCEINLINE int32 GetDamageAmount() const { return DamageAmount; }
+    /** Gets the ExplosionSize Variable */
+    FORCEINLINE int32 GetExplosionSize() const { return ExplosionSize; }
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

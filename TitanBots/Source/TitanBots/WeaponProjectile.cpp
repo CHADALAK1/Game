@@ -32,8 +32,6 @@ AWeaponProjectile::AWeaponProjectile(const FObjectInitializer& ObjectInitializer
 	AuraParticle = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("AuraParticle"));
 	AuraParticle->AttachTo(RootComponent);
 
-	DamageAmount = 0;
-
 }
 
 void AWeaponProjectile::BeginPlay()
@@ -44,6 +42,18 @@ void AWeaponProjectile::BeginPlay()
 void AWeaponProjectile::Tick(float DeltaSeconds)
 {
 
+}
+
+void AWeaponProjectile::SetDamageAmount(int32 NewAmount)
+{
+    if(NewAmount >= 0)
+    {
+        DamageAmount = NewAmount;
+    }
+    else
+    {
+        DamageAmount = 0;
+    }
 }
 
 void AWeaponProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

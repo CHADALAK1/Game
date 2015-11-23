@@ -7,5 +7,7 @@
 AHeavyPawn::AHeavyPawn()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+    SetMaxArmor(300);
+    SetMaxHealth(200);
 }
 

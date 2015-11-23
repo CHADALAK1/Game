@@ -32,24 +32,80 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ID)
 	FString CharacterMeshID;
     
+    /**
+     * Get function that returns the PERCENTAGE
+     * value for Health
+     */
+    UFUNCTION(BlueprintCallable, Category = Health)
+    float GetHealthPercentage();
+    
+    /**
+     * Get function that returns the PERCENTAGE
+     * value for Armor
+     */
+    UFUNCTION(BlueprintCallable, Category = Armor)
+    float GetArmorPercentage();
+    
+    /** Sets the amount of Health
+     * @param NewHealth the new value for Health
+     */
     void SetHealth(int32 NewHealth);
     
+    /** Sets the amount of armor
+     * @param NewArmor  the new value for Armor
+     */
     void SetArmor(int32 NewArmor);
     
+    /** Adds Health
+     * @param Amount  the amount of Health to be added
+     */
     void AddHealth(int32 Amount);
     
+    /** Decreases health
+     * @param Amount  the amount of Health to be decreases
+     */
     void DecreaseHealth(int32 Amount);
     
+    /** Adds armor
+     * @param Amount  the amount of armor to be added
+     */
     void AddArmor(int32 Amount);
     
+    /** Decreases armor
+     * @param Amount  The amount of armor to be depleted
+     */
     void DecreaseArmor(int32 Amount);
+    
+    /** Sets the new MaxHealth
+     * @param NewMaxHealth  The amount set to be for MaxHealth
+     */
+    void SetMaxHealth(int32 NewMaxHealth);
+    
+    /** Sets the new MaxArmor
+     * @param NewMaxArmor  The amount set to be for MaxArmor
+     */
+    void SetMaxArmor(int32 NewMaxArmor);
+    
+    /** Fires arm cannon/Melee weapon */
+    void Fire();
+    
+    /** Stops firing weapon */
+    void StopFire();
     
     
 private:
     
+    /** Health value for the Player */
     int32 Health;
     
+    /** Armor value for the Player */
     int32 Armor;
+    
+    /** int value that hold the Maximum Health */
+    int32 MaxHealth;
+    
+    /** int value that holds the Maximum Armor */
+    int32 MaxArmor;
 
 protected:
 
@@ -76,6 +132,10 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+    
+    /** Collision for the Collision Box */
+    UFUNCTION()
+    void OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void EndGame();
 
@@ -95,5 +155,9 @@ public:
     FORCEINLINE int32 GetHealth() const { return Health;}
     /** Gets the Armor Value for this Character */
     FORCEINLINE int32 GetArmor() const { return Armor; }
+    /** Gets the MaxHealth Value for this Character */
+    FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
+    /** Gets teh MaxArmor Value for this Character */
+    FORCEINLINE int32 GetMaxArmor() const { return MaxArmor; }
 };
 
