@@ -12,8 +12,8 @@ UCLASS()
 class TITANBOTS_API AMediumPawn : public ATitanBotsCharacter
 {
 	GENERATED_BODY()
-	
-	
+
+	AMediumPawn();
 	
 	
 };

@@ -4,5 +4,9 @@
 #include "MediumPawn.h"
 
 
-
-
+AMediumPawn::AMediumPawn()
+{
+	SetHealth(200);
+	SetArmor(300);
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+}

@@ -12,7 +12,7 @@ ATitanBotsGameMode::ATitanBotsGameMode()
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/ThirdPerson/Blueprints/TBPlayerController_BP"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
+		DefaultPawnClass = NULL;
 	}
 	if (PlayerControllerBPClass.Class != NULL)
 	{
