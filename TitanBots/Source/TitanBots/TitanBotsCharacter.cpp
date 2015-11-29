@@ -1,8 +1,10 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 
 #include "TitanBots.h"
+#include "EnemyAIController.h"
+#include "TitanBotsPlayerController.h"
 #include "TitanBotsGameMode.h"
-#include "WeaponProjectile.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "TitanBotsCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,6 +82,38 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &ATitanBotsCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &ATitanBotsCharacter::TouchStopped);
+}
+
+void ATitanBotsCharacter::BeginPlay()
+{
+	//if this Character is being possessed by the player
+	if (this->GetController()->IsA(ATitanBotsPlayerController::StaticClass()))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, "FOUND Player");
+		//Get all TitanBotsCharactter Actors on the scene
+		for (TActorIterator<ATitanBotsCharacter> Itr(GetWorld()); Itr; ++Itr)
+		{
+			//If one of them is being controlled by a EnemyAIController
+			if (Itr->GetController()->IsA(AEnemyAIController::StaticClass()))
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, "FOUND ENEMY");
+				//Store iterated Character in Enemy Pawn (must dereference the Iterator to store in EnemyPawn)
+				EnemyPawn = *Itr;
+				
+			}
+		}
+	}
+}
+
+void ATitanBotsCharacter::Tick(float DeltaSeconds)
+{
+	if (EnemyPawn != NULL)
+	{
+		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EnemyPawn->GetActorLocation());
+		GetCameraBoom()->SetRelativeLocation(FVector(0,0, 200));
+		SetActorRotation(Rotation);
+		this->GetController()->SetControlRotation(Rotation);
+	}
 }
 
 void ATitanBotsCharacter::EndGame()
@@ -199,12 +233,6 @@ float ATitanBotsCharacter::GetArmorPercentage()
 
 void ATitanBotsCharacter::OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    AWeaponProjectile* Proj = Cast<AWeaponProjectile>(OtherActor);
-    
-    if(Proj)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "PROJECTILE");
-    }
 }
 
 void ATitanBotsCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)

@@ -31,6 +31,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ID)
 	FString CharacterMeshID;
+
+	ATitanBotsCharacter* EnemyPawn;
     
     /**
      * Get function that returns the PERCENTAGE
@@ -91,6 +93,11 @@ public:
     
     /** Stops firing weapon */
     void StopFire();
+
+	/** Begin Play Native UE4 function*/
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
     
     
 private:
