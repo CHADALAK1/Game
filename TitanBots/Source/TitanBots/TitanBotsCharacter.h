@@ -1,6 +1,7 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+#include "WeaponProjectile.h"
 #include "TitanBotsCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -31,6 +32,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ID)
 	FString CharacterMeshID;
+
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<AWeaponProjectile> WeapProj;
 
 	ATitanBotsCharacter* EnemyPawn;
 

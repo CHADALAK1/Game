@@ -33,7 +33,7 @@ ATitanBotsCharacter::ATitanBotsCharacter()
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->AttachTo(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
+	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
@@ -122,6 +122,14 @@ void ATitanBotsCharacter::EndGame()
 void ATitanBotsCharacter::Fire()
 {
     GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "Fire");
+	FActorSpawnParameters Params;
+	Params.Instigator = this;
+	Params.Owner = this;
+	AWeaponProjectile *Proj = GetWorld()->SpawnActor<AWeaponProjectile>(WeapProj, GetMesh()->GetSocketLocation("Proj_Socket"), GetFollowCamera()->GetForwardVector().Rotation());
+	if (Proj)
+	{
+
+	}
 }
 
 void ATitanBotsCharacter::StopFire()
@@ -155,7 +163,7 @@ void ATitanBotsCharacter::LockOnLogic()
 	}
 	else
 	{
-		GetCameraBoom()->SetRelativeLocation(FVector(0, 0, 0));
+		GetCameraBoom()->SetRelativeLocation(FVector(0, 0, 50));
 	}
 }
 

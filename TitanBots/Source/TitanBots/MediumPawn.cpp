@@ -6,7 +6,9 @@
 
 AMediumPawn::AMediumPawn()
 {
+	SetMaxHealth(200);
 	SetHealth(200);
+	SetMaxArmor(300);
 	SetArmor(300);
 	GetCharacterMovement()->MaxWalkSpeed = 450.f;
 }
