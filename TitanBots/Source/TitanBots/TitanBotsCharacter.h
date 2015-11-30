@@ -33,6 +33,8 @@ public:
 	FString CharacterMeshID;
 
 	ATitanBotsCharacter* EnemyPawn;
+
+	bool bIsLockedOn;
     
     /**
      * Get function that returns the PERCENTAGE
@@ -93,6 +95,10 @@ public:
     
     /** Stops firing weapon */
     void StopFire();
+
+	void LockOn();
+
+	void LockOnLogic();
 
 	/** Begin Play Native UE4 function*/
 	virtual void BeginPlay() override;

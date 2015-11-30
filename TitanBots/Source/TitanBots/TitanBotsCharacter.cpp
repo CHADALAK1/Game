@@ -50,6 +50,7 @@ ATitanBotsCharacter::ATitanBotsCharacter()
     Health = 100;
     Armor = 100;
     
+	bIsLockedOn = false;
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -67,6 +68,7 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
     InputComponent->BindAction("Action", IE_Pressed, this, &ATitanBotsCharacter::Fire);
     InputComponent->BindAction("Action", IE_Released, this, &ATitanBotsCharacter::StopFire);
 	InputComponent->BindAction("ExitGame", IE_Pressed, this, &ATitanBotsCharacter::EndGame);
+	InputComponent->BindAction("LockOn", IE_Pressed, this, &ATitanBotsCharacter::LockOn);
 
 	InputComponent->BindAxis("MoveForward", this, &ATitanBotsCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATitanBotsCharacter::MoveRight);
@@ -107,13 +109,7 @@ void ATitanBotsCharacter::BeginPlay()
 
 void ATitanBotsCharacter::Tick(float DeltaSeconds)
 {
-	if (EnemyPawn != NULL)
-	{
-		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EnemyPawn->GetActorLocation());
-		GetCameraBoom()->SetRelativeLocation(FVector(0,0, 200));
-		SetActorRotation(Rotation);
-		this->GetController()->SetControlRotation(Rotation);
-	}
+	LockOnLogic();
 }
 
 void ATitanBotsCharacter::EndGame()
@@ -131,6 +127,36 @@ void ATitanBotsCharacter::Fire()
 void ATitanBotsCharacter::StopFire()
 {
     GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "StopFire");
+}
+
+void ATitanBotsCharacter::LockOn()
+{
+	if (!bIsLockedOn)
+	{
+		bIsLockedOn = true;
+	}
+	else
+	{
+		bIsLockedOn = false;
+	}
+}
+
+void ATitanBotsCharacter::LockOnLogic()
+{
+	if (bIsLockedOn)
+	{
+		if (EnemyPawn != NULL)
+		{
+			FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EnemyPawn->GetActorLocation());
+			GetCameraBoom()->SetRelativeLocation(FVector(0, 0, 200));
+			SetActorRotation(Rotation);
+			this->GetController()->SetControlRotation(Rotation);
+		}
+	}
+	else
+	{
+		GetCameraBoom()->SetRelativeLocation(FVector(0, 0, 0));
+	}
 }
 
 void ATitanBotsCharacter::SetArmor(int32 NewArmor)
