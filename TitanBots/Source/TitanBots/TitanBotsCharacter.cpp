@@ -33,7 +33,7 @@ ATitanBotsCharacter::ATitanBotsCharacter()
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->AttachTo(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
+	CameraBoom->TargetArmLength = 350.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
@@ -44,6 +44,12 @@ ATitanBotsCharacter::ATitanBotsCharacter()
     Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
     Collision->AttachTo(RootComponent);
     Collision->OnComponentBeginOverlap.AddDynamic(this, &ATitanBotsCharacter::OnEnterCollision);
+
+	ProjSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("ProjSpawn"));
+	ProjSpawn->AttachTo(RootComponent);
+
+	bUseControllerRotationYaw = true;
+
     MaxHealth = 100;
     MaxArmor = 100;
     
@@ -51,6 +57,9 @@ ATitanBotsCharacter::ATitanBotsCharacter()
     Armor = 100;
     
 	bIsLockedOn = false;
+
+	CamLocY = 0.f;
+	CamLocZ = 0.f;
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -125,10 +134,10 @@ void ATitanBotsCharacter::Fire()
 	FActorSpawnParameters Params;
 	Params.Instigator = this;
 	Params.Owner = this;
-	AWeaponProjectile *Proj = GetWorld()->SpawnActor<AWeaponProjectile>(WeapProj, GetMesh()->GetSocketLocation("Proj_Socket"), GetFollowCamera()->GetForwardVector().Rotation());
+	AWeaponProjectile *Proj = GetWorld()->SpawnActor<AWeaponProjectile>(WeapProj, GetProjSpawn()->GetComponentLocation(), GetFollowCamera()->GetForwardVector().Rotation(), Params);
 	if (Proj)
 	{
-
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "SPAWN");
 	}
 }
 
@@ -155,15 +164,19 @@ void ATitanBotsCharacter::LockOnLogic()
 	{
 		if (EnemyPawn != NULL)
 		{
+			CamLocZ = FMath::FInterpTo(CamLocZ, 200.f, GetWorld()->GetDeltaSeconds(), 3.0f);
+			CamLocY = FMath::FInterpTo(CamLocY, 0.f, GetWorld()->GetDeltaSeconds(), 3.0f);
 			FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EnemyPawn->GetActorLocation());
-			GetCameraBoom()->SetRelativeLocation(FVector(0, 0, 200));
-			SetActorRotation(Rotation);
+			GetCameraBoom()->SetRelativeLocation(FVector(0, 0, CamLocZ));
+			SetActorRotation(FRotator(0,Rotation.Yaw,0));
 			this->GetController()->SetControlRotation(Rotation);
 		}
 	}
 	else
 	{
-		GetCameraBoom()->SetRelativeLocation(FVector(0, 0, 50));
+		CamLocZ = FMath::FInterpTo(CamLocZ, 10.f, GetWorld()->GetDeltaSeconds(), 3.0f);
+		CamLocY = FMath::FInterpTo(CamLocY, 75.f, GetWorld()->GetDeltaSeconds(), 3.0f);
+		GetCameraBoom()->SetRelativeLocation(FVector(0, CamLocY, CamLocZ));
 	}
 }
 
@@ -267,6 +280,7 @@ float ATitanBotsCharacter::GetArmorPercentage()
 
 void ATitanBotsCharacter::OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
 }
 
 void ATitanBotsCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)

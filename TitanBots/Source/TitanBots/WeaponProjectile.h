@@ -37,7 +37,7 @@ public:
 
 	/** called when projectile hits something */
 	UFUNCTION()
-	virtual void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+		virtual void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& SweepResult);
     
     /** Sets the amount for DamageAmount
      * @param NewAmount  value for the new DamageAmount

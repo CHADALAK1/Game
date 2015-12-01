@@ -19,6 +19,9 @@ class ATitanBotsCharacter : public ACharacter
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
     class UBoxComponent *Collision;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ProjSpawn, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent *ProjSpawn;
 public:
 	ATitanBotsCharacter();
 
@@ -34,11 +37,14 @@ public:
 	FString CharacterMeshID;
 
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	TSubclassOf<AWeaponProjectile> WeapProj;
+	TSubclassOf<class AWeaponProjectile> WeapProj;
 
 	ATitanBotsCharacter* EnemyPawn;
 
 	bool bIsLockedOn;
+
+	float CamLocZ;
+	float CamLocY;
     
     /**
      * Get function that returns the PERCENTAGE
@@ -168,6 +174,8 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
     /** Returns Collision subobject **/
     FORCEINLINE class UBoxComponent* GetCollision() const { return Collision; }
+	/** Returns ProjSPawn subobject */
+	FORCEINLINE class UBoxComponent* GetProjSpawn() const { return ProjSpawn; }
     /** Gets the Health Value for this Character */
     FORCEINLINE int32 GetHealth() const { return Health;}
     /** Gets the Armor Value for this Character */
