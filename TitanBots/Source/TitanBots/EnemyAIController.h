@@ -8,6 +8,15 @@
 /**
  * 
  */
+
+UENUM(BlueprintType)
+enum class EState : uint8
+{
+	E_Idle		UMETA(DisplayName = "Idle"),
+	E_Chase		UMETA(DisplayName = "Chase"),
+	E_Fire		UMETA(DisplayName = "Fire")
+};
+
 UCLASS()
 class TITANBOTS_API AEnemyAIController : public AAIController
 {
@@ -16,6 +25,9 @@ class TITANBOTS_API AEnemyAIController : public AAIController
 public:
     
     AEnemyAIController();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State)
+	EState State;
     
     virtual void Tick(float DeltaSeconds) override;
 	

@@ -36,15 +36,26 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ID)
 	FString CharacterMeshID;
 
+	/**Subclass variable to hold the projectile the Player will fire*/
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class AWeaponProjectile> WeapProj;
 
+	/** EnemyPawn Object to dictate what enemy we are fighting and to lock on to(
+	(WILL BE A TArray LATER IN THE PROTOTYPE)*/
 	ATitanBotsCharacter* EnemyPawn;
 
+	/** Bool to tell whether the character is locked onto the enemy*/
 	bool bIsLockedOn;
 
+	/** CameraLocation variables for Interloping*/
 	float CamLocZ;
 	float CamLocY;
+
+	/** Angle variables for Dashing directions*/
+	float AngleX;
+	float AngleY;
+
+
     
     /**
      * Get function that returns the PERCENTAGE
@@ -101,14 +112,25 @@ public:
     void SetMaxArmor(int32 NewMaxArmor);
     
     /** Fires arm cannon/Melee weapon */
+	UFUNCTION(BlueprintCallable, Category = Fire)
     void Fire();
     
     /** Stops firing weapon */
+	UFUNCTION(BlueprintCallable, Category = Fire)
     void StopFire();
 
+	/** Exec function that makes the character lock on the enemy*/
 	void LockOn();
 
+	/** Logic that holds the rules for locking on the Enemy*/
 	void LockOnLogic();
+
+	/** Exec function that makes the character Dash*/
+	UFUNCTION(BlueprintCallable, Category = Dash)
+	void Dash();
+
+	UFUNCTION(BlueprintCallable, Category = EnemySearch)
+	void DetectEnemy();
 
 	/** Begin Play Native UE4 function*/
 	virtual void BeginPlay() override;

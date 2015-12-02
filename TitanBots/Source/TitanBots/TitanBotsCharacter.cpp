@@ -78,6 +78,7 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
     InputComponent->BindAction("Action", IE_Released, this, &ATitanBotsCharacter::StopFire);
 	InputComponent->BindAction("ExitGame", IE_Pressed, this, &ATitanBotsCharacter::EndGame);
 	InputComponent->BindAction("LockOn", IE_Pressed, this, &ATitanBotsCharacter::LockOn);
+	InputComponent->BindAction("Dash", IE_Pressed, this, &ATitanBotsCharacter::Dash);
 
 	InputComponent->BindAxis("MoveForward", this, &ATitanBotsCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATitanBotsCharacter::MoveRight);
@@ -97,6 +98,11 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 
 void ATitanBotsCharacter::BeginPlay()
 {
+
+}
+
+void ATitanBotsCharacter::DetectEnemy()
+{
 	//if this Character is being possessed by the player
 	if (this->GetController()->IsA(ATitanBotsPlayerController::StaticClass()))
 	{
@@ -110,7 +116,7 @@ void ATitanBotsCharacter::BeginPlay()
 				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, "FOUND ENEMY");
 				//Store iterated Character in Enemy Pawn (must dereference the Iterator to store in EnemyPawn)
 				EnemyPawn = *Itr;
-				
+
 			}
 		}
 	}
@@ -160,8 +166,10 @@ void ATitanBotsCharacter::LockOn()
 
 void ATitanBotsCharacter::LockOnLogic()
 {
+	//if we are locked on
 	if (bIsLockedOn)
 	{
+		//if we have an enemy in the World
 		if (EnemyPawn != NULL)
 		{
 			CamLocZ = FMath::FInterpTo(CamLocZ, 200.f, GetWorld()->GetDeltaSeconds(), 3.0f);
@@ -278,9 +286,36 @@ float ATitanBotsCharacter::GetArmorPercentage()
     return FMath::GetRangePct(0.f, MaxArmor, Armor);
 }
 
+void ATitanBotsCharacter::Dash()
+{
+	//if we are not in the air
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		//if we are moving
+		if (GetCharacterMovement()->Velocity != FVector(0, 0, 0))
+		{
+			//Get the rotation, but only control the Yaw value
+			FRotator DashAngle = FRotator(0, GetControlRotation().Yaw, 0);
+
+			FVector DashVector;
+			//Find out which direction we are moving
+			if (AngleY > 0.5f)
+			{
+				DashVector = DashAngle.RotateVector(FVector(0, 5000.f, 0));
+			}
+			else if (AngleY < -0.5f)
+			{
+				DashVector = DashAngle.RotateVector(FVector(0, -5000.f, 0));
+			}
+			//Launch the character to simulate Dash
+			LaunchCharacter(DashVector, false, false);
+		}
+	}
+}
+
 void ATitanBotsCharacter::OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
+	
 }
 
 void ATitanBotsCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -316,6 +351,8 @@ void ATitanBotsCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		//Set the X direction for the AngleX value
+		AngleX = Value;
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -330,6 +367,8 @@ void ATitanBotsCharacter::MoveRight(float Value)
 {
 	if ( (Controller != NULL) && (Value != 0.0f) )
 	{
+		//Set the Y direction for the AngleY value
+		AngleY = Value;
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
