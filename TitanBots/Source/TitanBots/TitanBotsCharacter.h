@@ -55,6 +55,11 @@ public:
 	float AngleX;
 	float AngleY;
 
+	UAudioComponent *PlaySound(USoundCue *Sound);
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	USoundCue* FireSound;
+
 
     
     /**

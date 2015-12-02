@@ -70,11 +70,25 @@ void AWeaponProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp
 		{
 			Char->DecreaseHealth(DamageAmount);
 			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "HIT");
+			PlayExplosionParticle();
 			Destroy();
 		}
 	}
 	else
 	{
+		PlayExplosionParticle();
 		Destroy();
+	}
+}
+
+void AWeaponProjectile::PlayExplosionParticle()
+{
+	if (Explosion)
+	{
+		UParticleSystemComponent *ExplosionPSC = UGameplayStatics::SpawnEmitterAtLocation(this, Explosion, GetActorLocation(), GetActorRotation(), true);
+		if (ExplosionPSC)
+		{
+
+		}
 	}
 }

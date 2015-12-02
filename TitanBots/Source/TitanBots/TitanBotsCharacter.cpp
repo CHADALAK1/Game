@@ -144,6 +144,7 @@ void ATitanBotsCharacter::Fire()
 	if (Proj)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "SPAWN");
+		PlaySound(FireSound);
 	}
 }
 
@@ -378,4 +379,14 @@ void ATitanBotsCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+UAudioComponent *ATitanBotsCharacter::PlaySound(USoundCue *Sound)
+{
+	UAudioComponent *AC = NULL;
+	if (Sound)
+	{
+		AC = UGameplayStatics::SpawnSoundAttached(Sound, GetRootComponent(), FName("NAME_None"), FVector(), EAttachLocation::SnapToTarget, false, 1.0f, this->GetActorTimeDilation(), 0.0f, NULL);
+	}
+	return AC;
 }

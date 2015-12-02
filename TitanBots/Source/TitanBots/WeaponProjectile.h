@@ -44,6 +44,12 @@ public:
      */
     void SetDamageAmount(int32 NewAmount);
 
+	UPROPERTY(EditDefaultsOnly, Category = Particle)
+	UParticleSystem *Explosion;
+
+
+	void PlayExplosionParticle();
+
 	/** Returns CollisionComp subobject **/
 	FORCEINLINE class USphereComponent* GetCollisionComp() const { return CollisionComp; }
 	/** Returns ProjectileMovement subobject **/
