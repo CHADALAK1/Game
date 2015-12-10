@@ -10,9 +10,9 @@ UCLASS()
 class TITANBOTS_API AWeaponProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-	/** Sphere collision component */
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile, meta = (AllowPrivateAccess = "true"))
+
+		/** Sphere collision component */
+		UPROPERTY(VisibleDefaultsOnly, Category = Projectile, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* CollisionComp;
 
 	/** Projectile movement component */
@@ -22,14 +22,14 @@ class TITANBOTS_API AWeaponProjectile : public AActor
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UParticleSystemComponent* AuraParticle;
-    
+
 private:
-    
-    /** Damage count necessary to find out how much damage it does*/
-    int32 DamageAmount;
-    
-    /** Size of the explosion particle on Collision*/
-    int32 ExplosionSize;
+
+	/** Damage count necessary to find out how much damage it does*/
+	int32 DamageAmount;
+
+	/** Size of the explosion particle on Collision*/
+	int32 ExplosionSize;
 
 public:
 	// Sets default values for this actor's properties
@@ -38,7 +38,12 @@ public:
 	/** called when projectile hits something */
 	UFUNCTION()
 		virtual void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& SweepResult);
-    
+
+	UAudioComponent *PlaySound(USoundCue *Sound);
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+		USoundCue *ExplosionSound;
+
     /** Sets the amount for DamageAmount
      * @param NewAmount  value for the new DamageAmount
      */

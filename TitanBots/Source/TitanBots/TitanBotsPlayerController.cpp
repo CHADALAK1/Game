@@ -41,6 +41,11 @@ void ATitanBotsPlayerController::BeginPlay()
 	TCPConnectionListener();
 }
 
+void ATitanBotsPlayerController::SetClassType(ClassType Type)
+{
+	TypeClass = Type;
+}
+
 
 //TCP Connection Listener
 void ATitanBotsPlayerController::TCPConnectionListener()

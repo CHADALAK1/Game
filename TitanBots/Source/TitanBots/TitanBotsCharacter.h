@@ -22,6 +22,7 @@ class ATitanBotsCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ProjSpawn, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent *ProjSpawn;
+
 public:
 	ATitanBotsCharacter();
 
@@ -55,26 +56,35 @@ public:
 	float AngleX;
 	float AngleY;
 
+	/** Plays sound for this character
+	* @param Sound  SoundCue to play
+	*/
 	UAudioComponent *PlaySound(USoundCue *Sound);
 
+	/** Fire sound for this character*/
 	UPROPERTY(EditDefaultsOnly, Category = Sound)
 	USoundCue* FireSound;
 
-
-    
     /**
      * Get function that returns the PERCENTAGE
      * value for Health
      */
     UFUNCTION(BlueprintCallable, Category = Health)
     float GetHealthPercentage();
-    
-    /**
-     * Get function that returns the PERCENTAGE
-     * value for Armor
-     */
-    UFUNCTION(BlueprintCallable, Category = Armor)
-    float GetArmorPercentage();
+
+	/**
+	* Get function that returns the PERCENTAGE
+	* value for Armor
+	*/
+	UFUNCTION(BlueprintCallable, Category = Armor)
+	float GetArmorPercentage();
+
+	/**
+	* Get function that returns the PERCENTAGE
+	* value for Energy
+	*/
+	UFUNCTION(BlueprintCallable, Category = Energy)
+	float GetEnergyPercentage();
     
     /** Sets the amount of Health
      * @param NewHealth the new value for Health
@@ -85,6 +95,11 @@ public:
      * @param NewArmor  the new value for Armor
      */
     void SetArmor(int32 NewArmor);
+
+	/** Sets the amount of Energy
+	* @param NewEnergy  the new value of Energy
+	*/
+	void SetEnergy(int32 NewEnergy);
     
     /** Adds Health
      * @param Amount  the amount of Health to be added
@@ -105,16 +120,49 @@ public:
      * @param Amount  The amount of armor to be depleted
      */
     void DecreaseArmor(int32 Amount);
+
+	/** AddEnergy
+	* @param Amount  The amount of Energy to be added
+	*/
+	void AddEnergy(int32 Amount);
+
+	/** DecreaseEnergy
+	* @param Amount  The amount of Energy to be depleted
+	*/
+	void DecreaseEnergy(int32 Amount);
+
+	/** SetMaxEnergy
+	* @param NewMax  Sets the new MaxEnergy amount for the character
+	*/
+	void SetMaxEnergy(int32 NewMaxEnergy);
     
     /** Sets the new MaxHealth
      * @param NewMaxHealth  The amount set to be for MaxHealth
      */
     void SetMaxHealth(int32 NewMaxHealth);
+
+	/**Get function for the bIsSpecial bool*/
+	bool IsSpecial();
+
+	/**Set Function to turn on or off Special*/
+	void SetIsSpecial(bool Special);
     
     /** Sets the new MaxArmor
      * @param NewMaxArmor  The amount set to be for MaxArmor
      */
     void SetMaxArmor(int32 NewMaxArmor);
+
+	/**Sets the bool bIsInvulnerable*/
+	void SetIsInvulnerable(bool Set);
+
+	/**Sets the bool bIsDead*/
+	void SetIsDead(bool Set);
+
+	/** Drains the Energy for Character(VIRTUAL FUNCTION)*/
+	virtual void DrainEnergy(){}
+
+	/**Regenerates Energy for Character(VIRTUAL FUNCTION)*/
+	virtual void RegenerateEnergy(){}
     
     /** Fires arm cannon/Melee weapon */
 	UFUNCTION(BlueprintCallable, Category = Fire)
@@ -123,6 +171,12 @@ public:
     /** Stops firing weapon */
 	UFUNCTION(BlueprintCallable, Category = Fire)
     void StopFire();
+
+	/**Starts Charge ability for Pawn*/
+	virtual void SpecialStart();
+
+	/**Stops Charge ability for Pawn*/
+	virtual void SpecialStop();
 
 	/** Exec function that makes the character lock on the enemy*/
 	void LockOn();
@@ -134,6 +188,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Dash)
 	void Dash();
 
+	/** Gets the world for enemies to store for lock on system*/
 	UFUNCTION(BlueprintCallable, Category = EnemySearch)
 	void DetectEnemy();
 
@@ -145,17 +200,32 @@ public:
     
 private:
     
-    /** Health value for the Player */
+    /** Health value for the Pawn */
     int32 Health;
     
-    /** Armor value for the Player */
+    /** Armor value for the Pawn */
     int32 Armor;
+
+	/** Energy value for the Pawn(like stamina for the special)*/
+	int32 Energy;
+
+	/** Max Energy value for the Pawn*/
+	int32 MaxEnergy;
     
     /** int value that hold the Maximum Health */
     int32 MaxHealth;
     
     /** int value that holds the Maximum Armor */
     int32 MaxArmor;
+
+	/**Bool to tell whether the character's special is on*/
+	bool bIsSpecial;
+
+	/** Bool to tell whether the character's invulnerable*/
+	bool bIsInvulnerable;
+
+	/** Bool to tell whether the character's Dead*/
+	bool bIsDead;
 
 protected:
 
@@ -211,5 +281,14 @@ public:
     FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
     /** Gets teh MaxArmor Value for this Character */
     FORCEINLINE int32 GetMaxArmor() const { return MaxArmor; }
+	/** Gets the Energy Value for this Character*/
+	FORCEINLINE int32 GetEnergy() const { return Energy; }
+	/** Gets the MaxEnergy Value for this Character*/
+	FORCEINLINE int32 GetMaxEnergy() const { return MaxEnergy; }
+	/** Gets the bool for bIsInvulnerable for this character*/
+	FORCEINLINE bool IsInvulnerable() const { return bIsInvulnerable; }
+	/** Gets the bool for bIsDead for this character*/
+	FORCEINLINE bool IsDead() const { return bIsDead; }
+
 };
 

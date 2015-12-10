@@ -3,6 +3,7 @@
 #pragma once
 
 #include "TitanBotsCharacter.h"
+#include "ParticleDefinitions.h"
 #include "LightPawn.generated.h"
 
 /**
@@ -13,7 +14,22 @@ class TITANBOTS_API ALightPawn : public ATitanBotsCharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ParticleSpawn, meta = (AllowPrivateAccess = "true"))
+	class UParticleSystemComponent *ChargeSpawn;
+
+public:
 
 	ALightPawn();
+
+	//@Override
+	virtual void SpecialStart() override;
+
+	//@Override
+	virtual void SpecialStop() override;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	/** Gets the ParticleSPawn Object for this Character*/
+	FORCEINLINE UParticleSystemComponent *GetChargeSpawn() const{ return ChargeSpawn; }
 	
 };

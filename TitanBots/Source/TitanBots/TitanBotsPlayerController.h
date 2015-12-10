@@ -52,6 +52,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Garage)
 	TEnumAsByte<ClassType> TypeClass;
 
+	UFUNCTION(BlueprintCallable, Category = ClassType)
+	void SetClassType(ClassType Type);
+
 	virtual void BeginPlay() override;
 
 	FTimerHandle Timer01;

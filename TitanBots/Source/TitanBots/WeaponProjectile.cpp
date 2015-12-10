@@ -63,22 +63,46 @@ void AWeaponProjectile::SetDamageAmount(int32 NewAmount)
 void AWeaponProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& SweepResult)
 {
 	ATitanBotsCharacter *Char = Cast<ATitanBotsCharacter>(OtherActor);
+	AWeaponProjectile *Proj = Cast<AWeaponProjectile>(OtherActor);
 	
 	if (Char)
 	{
 		if (Char != GetInstigator())
 		{
-			Char->DecreaseHealth(DamageAmount);
+			if (Char->GetArmor() > 0)
+			{
+				Char->DecreaseArmor(DamageAmount);
+			}
+			else
+			{
+				Char->DecreaseHealth(DamageAmount);
+			}
 			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "HIT");
+			PlaySound(ExplosionSound);
 			PlayExplosionParticle();
 			Destroy();
 		}
 	}
+	else if (Proj)
+	{
+		GetCollisionComp()->IgnoreActorWhenMoving(Proj, true);
+	}
 	else
 	{
 		PlayExplosionParticle();
+		PlaySound(ExplosionSound);
 		Destroy();
 	}
+}
+
+UAudioComponent* AWeaponProjectile::PlaySound(USoundCue *Sound)
+{
+	UAudioComponent *AC = NULL;
+	if (Sound)
+	{
+		AC = UGameplayStatics::SpawnSoundAttached(Sound, GetRootComponent(), FName("NAME_None"), FVector(), EAttachLocation::SnapToTarget, false, 1.0f, this->GetActorTimeDilation(), 0.0f, NULL);
+	}
+	return AC;
 }
 
 void AWeaponProjectile::PlayExplosionParticle()

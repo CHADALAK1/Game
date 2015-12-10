@@ -57,6 +57,8 @@ ATitanBotsCharacter::ATitanBotsCharacter()
     Armor = 100;
     
 	bIsLockedOn = false;
+	bIsDead = false;
+	bIsSpecial = false;
 
 	CamLocY = 0.f;
 	CamLocZ = 0.f;
@@ -76,6 +78,8 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
     InputComponent->BindAction("Action", IE_Pressed, this, &ATitanBotsCharacter::Fire);
     InputComponent->BindAction("Action", IE_Released, this, &ATitanBotsCharacter::StopFire);
+	InputComponent->BindAction("Special", IE_Pressed, this, &ATitanBotsCharacter::SpecialStart);
+	InputComponent->BindAction("Special", IE_Released, this, &ATitanBotsCharacter::SpecialStop);
 	InputComponent->BindAction("ExitGame", IE_Pressed, this, &ATitanBotsCharacter::EndGame);
 	InputComponent->BindAction("LockOn", IE_Pressed, this, &ATitanBotsCharacter::LockOn);
 	InputComponent->BindAction("Dash", IE_Pressed, this, &ATitanBotsCharacter::Dash);
@@ -136,21 +140,36 @@ void ATitanBotsCharacter::EndGame()
 
 void ATitanBotsCharacter::Fire()
 {
-    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "Fire");
-	FActorSpawnParameters Params;
-	Params.Instigator = this;
-	Params.Owner = this;
-	AWeaponProjectile *Proj = GetWorld()->SpawnActor<AWeaponProjectile>(WeapProj, GetProjSpawn()->GetComponentLocation(), GetFollowCamera()->GetForwardVector().Rotation(), Params);
-	if (Proj)
+	if (!IsSpecial())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "SPAWN");
-		PlaySound(FireSound);
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "Fire");
+		FActorSpawnParameters Params;
+		Params.Instigator = this;
+		Params.Owner = this;
+		AWeaponProjectile *Proj = GetWorld()->SpawnActor<AWeaponProjectile>(WeapProj, GetProjSpawn()->GetComponentLocation(), GetFollowCamera()->GetForwardVector().Rotation(), Params);
+		if (Proj)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "SPAWN");
+			PlaySound(FireSound);
+		}
 	}
 }
 
 void ATitanBotsCharacter::StopFire()
 {
-    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "StopFire");
+	if (!IsSpecial())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "StopFire");
+	}
+}
+void ATitanBotsCharacter::SpecialStart()
+{
+	SetIsSpecial(true);
+}
+
+void ATitanBotsCharacter::SpecialStop()
+{
+	SetIsSpecial(false);
 }
 
 void ATitanBotsCharacter::LockOn()
@@ -205,6 +224,19 @@ void ATitanBotsCharacter::SetHealth(int32 NewHealth)
     }
 }
 
+void ATitanBotsCharacter::SetEnergy(int32 NewEnergy)
+{
+	if (NewEnergy >= 0 && NewEnergy <= GetMaxEnergy())
+	{
+		Energy = NewEnergy;
+	}
+}
+
+void ATitanBotsCharacter::SetIsDead(bool Set)
+{
+	bIsDead = Set;
+}
+
 void ATitanBotsCharacter::AddHealth(int32 Amount)
 {
     if((GetHealth() + Amount) < GetMaxHealth())
@@ -219,14 +251,19 @@ void ATitanBotsCharacter::AddHealth(int32 Amount)
 
 void ATitanBotsCharacter::DecreaseHealth(int32 Amount)
 {
-    if((GetHealth() - Amount) > 0)
-    {
-        Health -= Amount;
-    }
-    else
-    {
-        Health = 0;
-    }
+	if (!IsInvulnerable())
+	{
+		if ((GetHealth() - Amount) > 0)
+		{
+			Health -= Amount;
+		}
+		else
+		{
+			Health = 0;
+			SetIsDead(true);
+			GetCharacterMovement()->DisableMovement();
+		}
+	}
 }
 
 void ATitanBotsCharacter::AddArmor(int32 Amount)
@@ -243,14 +280,46 @@ void ATitanBotsCharacter::AddArmor(int32 Amount)
 
 void ATitanBotsCharacter::DecreaseArmor(int32 Amount)
 {
-    if((GetArmor() - Amount) > 0)
-    {
-        Armor -= Amount;
-    }
-    else
-    {
-        Armor = 0;
-    }
+	if (!IsInvulnerable())
+	{
+		if ((GetArmor() - Amount) > 0)
+		{
+			Armor -= Amount;
+		}
+		else
+		{
+			Armor = 0;
+		}
+	}
+}
+
+void ATitanBotsCharacter::AddEnergy(int32 Amount)
+{
+	if ((GetEnergy() + Amount) < GetMaxEnergy())
+	{
+		Energy += Amount;
+	}
+	else
+	{
+		Energy = GetMaxEnergy();
+	}
+}
+
+void ATitanBotsCharacter::DecreaseEnergy(int32 Amount)
+{
+	if ((GetEnergy() - Amount) > 0)
+	{
+		Energy -= Amount;
+	}
+	else
+	{
+		Energy = 0;
+	}
+}
+
+void ATitanBotsCharacter::SetMaxEnergy(int32 NewMaxEnergy)
+{
+	MaxEnergy = NewMaxEnergy;
 }
 
 void ATitanBotsCharacter::SetMaxHealth(int32 NewMaxHealth)
@@ -277,6 +346,11 @@ void ATitanBotsCharacter::SetMaxArmor(int32 NewMaxArmor)
     }
 }
 
+void ATitanBotsCharacter::SetIsInvulnerable(bool Set)
+{
+	bIsInvulnerable = Set;
+}
+
 float ATitanBotsCharacter::GetHealthPercentage()
 {
     return FMath::GetRangePct(0.f, MaxHealth, Health);
@@ -285,6 +359,21 @@ float ATitanBotsCharacter::GetHealthPercentage()
 float ATitanBotsCharacter::GetArmorPercentage()
 {
     return FMath::GetRangePct(0.f, MaxArmor, Armor);
+}
+
+float ATitanBotsCharacter::GetEnergyPercentage()
+{
+	return FMath::GetRangePct(0.f, MaxEnergy, Energy);
+}
+
+bool ATitanBotsCharacter::IsSpecial()
+{
+	return bIsSpecial;
+}
+
+void ATitanBotsCharacter::SetIsSpecial(bool Special)
+{
+	bIsSpecial = Special;
 }
 
 void ATitanBotsCharacter::Dash()
