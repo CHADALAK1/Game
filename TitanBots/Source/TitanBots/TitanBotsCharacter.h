@@ -43,6 +43,7 @@ public:
 
 	/** EnemyPawn Object to dictate what enemy we are fighting and to lock on to(
 	(WILL BE A TArray LATER IN THE PROTOTYPE)*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 	ATitanBotsCharacter* EnemyPawn;
 
 	/** Bool to tell whether the character is locked onto the enemy*/

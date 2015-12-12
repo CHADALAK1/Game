@@ -10,6 +10,7 @@
 AEnemyAIController::AEnemyAIController()
 {
     PrimaryActorTick.bCanEverTick = true;
+	SetClassType(AIClassType::E_AILight);
 }
 
 void AEnemyAIController::Tick(float DeltaSeconds)
@@ -24,4 +25,9 @@ void AEnemyAIController::Tick(float DeltaSeconds)
             GM->GameType = EGameType::E_MatchEnded;
         }
     }
+}
+
+void AEnemyAIController::SetClassType(AIClassType Type)
+{
+	TypeClass = Type;
 }

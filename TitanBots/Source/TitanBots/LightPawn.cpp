@@ -65,7 +65,6 @@ void ALightPawn::SpecialStop()
 
 void ALightPawn::StartCharge()
 {
-	int32 TotalCharge = GetEnergy() - (ChargeAmount * 10);
 	if (GetEnergy() > 0)
 	{
 		if (ChargeAmount < 3.f && GetEnergy() > 0)
@@ -76,7 +75,7 @@ void ALightPawn::StartCharge()
 		}
 		else
 		{
-			ChargeAmount = TotalCharge/10;
+			ChargeAmount = 3.f;
 		}
 	}
 }
@@ -90,7 +89,7 @@ void ALightPawn::EndCharge()
 	AWeaponProjectile *Proj = GetWorld()->SpawnActor<AWeaponProjectile>(WeapProj, GetProjSpawn()->GetComponentLocation(), GetFollowCamera()->GetForwardVector().Rotation(), SpawnParams);
 	if (Proj)
 	{
-		Proj->SetActorScale3D(FVector(ChargeAmount, ChargeAmount, ChargeAmount));
+		Proj->GetAuraParticle()->SetRelativeScale3D(FVector(ChargeAmount, ChargeAmount, ChargeAmount));
 	}
 	ChargeAmount = 0.f;
 	GetChargeSpawn()->Deactivate();

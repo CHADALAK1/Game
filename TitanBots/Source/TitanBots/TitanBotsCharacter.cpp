@@ -132,6 +132,7 @@ void ATitanBotsCharacter::DetectEnemy()
 
 void ATitanBotsCharacter::Tick(float DeltaSeconds)
 {
+	Super::Tick(DeltaSeconds);
 	LockOnLogic();
 }
 
@@ -206,7 +207,7 @@ void ATitanBotsCharacter::LockOnLogic()
 	}
 	else
 	{
-		CamLocZ = FMath::FInterpTo(CamLocZ, 10.f, GetWorld()->GetDeltaSeconds(), 3.0f);
+		CamLocZ = FMath::FInterpTo(CamLocZ, 50.f, GetWorld()->GetDeltaSeconds(), 3.0f);
 		CamLocY = FMath::FInterpTo(CamLocY, 75.f, GetWorld()->GetDeltaSeconds(), 3.0f);
 		GetCameraBoom()->SetRelativeLocation(FVector(0, CamLocY, CamLocZ));
 	}
@@ -429,7 +430,7 @@ void ATitanBotsCharacter::Dash()
 void ATitanBotsCharacter::DisableDash()
 {
 	SetCanDash(false);
-	GetWorld()->GetTimerManager().SetTimer(DashCooldown, this, &ATitanBotsCharacter::EnableDash, 0.5, false);
+	GetWorld()->GetTimerManager().SetTimer(DashCooldown, this, &ATitanBotsCharacter::EnableDash, 1.0f, false);
 }
 
 void ATitanBotsCharacter::EnableDash()
