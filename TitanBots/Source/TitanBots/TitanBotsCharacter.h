@@ -56,6 +56,8 @@ public:
 	float AngleX;
 	float AngleY;
 
+	FTimerHandle DashCooldown;
+
 	/** Plays sound for this character
 	* @param Sound  SoundCue to play
 	*/
@@ -85,21 +87,6 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = Energy)
 	float GetEnergyPercentage();
-    
-    /** Sets the amount of Health
-     * @param NewHealth the new value for Health
-     */
-    void SetHealth(int32 NewHealth);
-    
-    /** Sets the amount of armor
-     * @param NewArmor  the new value for Armor
-     */
-    void SetArmor(int32 NewArmor);
-
-	/** Sets the amount of Energy
-	* @param NewEnergy  the new value of Energy
-	*/
-	void SetEnergy(int32 NewEnergy);
     
     /** Adds Health
      * @param Amount  the amount of Health to be added
@@ -141,8 +128,20 @@ public:
      */
     void SetMaxHealth(int32 NewMaxHealth);
 
-	/**Get function for the bIsSpecial bool*/
-	bool IsSpecial();
+	/** Sets the amount of Health
+	* @param NewHealth the new value for Health
+	*/
+	void SetHealth(int32 NewHealth);
+
+	/** Sets the amount of armor
+	* @param NewArmor  the new value for Armor
+	*/
+	void SetArmor(int32 NewArmor);
+
+	/** Sets the amount of Energy
+	* @param NewEnergy  the new value of Energy
+	*/
+	void SetEnergy(int32 NewEnergy);
 
 	/**Set Function to turn on or off Special*/
 	void SetIsSpecial(bool Special);
@@ -158,11 +157,29 @@ public:
 	/**Sets the bool bIsDead*/
 	void SetIsDead(bool Set);
 
+	/** Sets the bool bCanDash*/
+	void SetCanDash(bool Set);
+
+	/**Sets the bool for bIsCoolingDown*/
+	void SetIsCoolingDown(bool Set);
+
+	/**Sets the bool for bCanFireAgain*/
+	void SetCanFireAgain(bool Set);
+
+	/**Sets the bool for bIsChargeSpecial*/
+	void SetIsChargeSpecial(bool Set);
+
 	/** Drains the Energy for Character(VIRTUAL FUNCTION)*/
 	virtual void DrainEnergy(){}
 
 	/**Regenerates Energy for Character(VIRTUAL FUNCTION)*/
 	virtual void RegenerateEnergy(){}
+
+	/**Starts the cooldown for the Energy to replenish*/
+	virtual void CooldownEnergy(){}
+
+	/**enables energy to be used and replenishes Energy*/
+	virtual void EnableEnergyUse(){}
     
     /** Fires arm cannon/Melee weapon */
 	UFUNCTION(BlueprintCallable, Category = Fire)
@@ -187,6 +204,12 @@ public:
 	/** Exec function that makes the character Dash*/
 	UFUNCTION(BlueprintCallable, Category = Dash)
 	void Dash();
+
+	/** Disables dash for cooling down(PREVENTS BROKEN DASHING*/
+	void DisableDash();
+
+	/**Enables dash after cooldown is complete*/
+	void EnableDash();
 
 	/** Gets the world for enemies to store for lock on system*/
 	UFUNCTION(BlueprintCallable, Category = EnemySearch)
@@ -218,6 +241,9 @@ private:
     /** int value that holds the Maximum Armor */
     int32 MaxArmor;
 
+	/** Bool to tell whether the character can dash or not*/
+	bool bCanDash;
+
 	/**Bool to tell whether the character's special is on*/
 	bool bIsSpecial;
 
@@ -226,6 +252,15 @@ private:
 
 	/** Bool to tell whether the character's Dead*/
 	bool bIsDead;
+
+	/** Bool to tell whether the pawn is cooling down on energy use*/
+	bool bIsCoolingDown;
+
+	/** Bool that tells whether the LightPawn can fire the Special again*/
+	bool bCanFireAgain;
+
+	/** Bool that tells whether the LightPawn is firing the charge special*/
+	bool bIsChargeSpecial;
 
 protected:
 
@@ -279,16 +314,26 @@ public:
     FORCEINLINE int32 GetArmor() const { return Armor; }
     /** Gets the MaxHealth Value for this Character */
     FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
-    /** Gets teh MaxArmor Value for this Character */
+    /** Gets the MaxArmor Value for this Character */
     FORCEINLINE int32 GetMaxArmor() const { return MaxArmor; }
 	/** Gets the Energy Value for this Character*/
 	FORCEINLINE int32 GetEnergy() const { return Energy; }
 	/** Gets the MaxEnergy Value for this Character*/
 	FORCEINLINE int32 GetMaxEnergy() const { return MaxEnergy; }
+	/**Gets the bool for bCanDash for this Character*/
+	FORCEINLINE bool CanDash() const { return bCanDash; }
 	/** Gets the bool for bIsInvulnerable for this character*/
 	FORCEINLINE bool IsInvulnerable() const { return bIsInvulnerable; }
 	/** Gets the bool for bIsDead for this character*/
 	FORCEINLINE bool IsDead() const { return bIsDead; }
+	/**Get function for the bIsSpecial bool*/
+	FORCEINLINE bool IsSpecial() const { return bIsSpecial; }
+	/**Gets the bIsCoolingDown bool that is in the Medium Character*/
+	FORCEINLINE bool IsCoolingDown() const { return bIsCoolingDown; }
+	/** Gets the bCanFireAgain bool that is in Light Character*/
+	FORCEINLINE bool CanFireAgain() const { return bCanFireAgain; }
+	/** Gets the bIsChargeSpecial bool (FOR THE LIGHT CHARACTER*/
+	FORCEINLINE bool IsChargeSpecial() const { return bIsChargeSpecial; }
 
 };
 

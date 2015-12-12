@@ -58,7 +58,11 @@ ATitanBotsCharacter::ATitanBotsCharacter()
     
 	bIsLockedOn = false;
 	bIsDead = false;
+	bCanDash = true;
 	bIsSpecial = false;
+	bIsCoolingDown = false;
+	bCanFireAgain = true;
+	bIsChargeSpecial = false;
 
 	CamLocY = 0.f;
 	CamLocZ = 0.f;
@@ -208,45 +212,16 @@ void ATitanBotsCharacter::LockOnLogic()
 	}
 }
 
-void ATitanBotsCharacter::SetArmor(int32 NewArmor)
-{
-    if(NewArmor >= 0 && NewArmor <= GetMaxArmor())
-    {
-        Armor = NewArmor;
-    }
-}
-
-void ATitanBotsCharacter::SetHealth(int32 NewHealth)
-{
-    if(NewHealth >= 0 && NewHealth <=GetMaxHealth())
-    {
-        Health = NewHealth;
-    }
-}
-
-void ATitanBotsCharacter::SetEnergy(int32 NewEnergy)
-{
-	if (NewEnergy >= 0 && NewEnergy <= GetMaxEnergy())
-	{
-		Energy = NewEnergy;
-	}
-}
-
-void ATitanBotsCharacter::SetIsDead(bool Set)
-{
-	bIsDead = Set;
-}
-
 void ATitanBotsCharacter::AddHealth(int32 Amount)
 {
-    if((GetHealth() + Amount) < GetMaxHealth())
-    {
-        Health += Amount;
-    }
-    else
-    {
-        Health = 100;
-    }
+	if ((GetHealth() + Amount) < GetMaxHealth())
+	{
+		Health += Amount;
+	}
+	else
+	{
+		Health = 100;
+	}
 }
 
 void ATitanBotsCharacter::DecreaseHealth(int32 Amount)
@@ -268,14 +243,14 @@ void ATitanBotsCharacter::DecreaseHealth(int32 Amount)
 
 void ATitanBotsCharacter::AddArmor(int32 Amount)
 {
-    if((GetArmor() + Amount) < GetMaxArmor())
-    {
-        Armor += Amount;
-    }
-    else
-    {
-        Armor = 100;
-    }
+	if ((GetArmor() + Amount) < GetMaxArmor())
+	{
+		Armor += Amount;
+	}
+	else
+	{
+		Armor = 100;
+	}
 }
 
 void ATitanBotsCharacter::DecreaseArmor(int32 Amount)
@@ -317,6 +292,30 @@ void ATitanBotsCharacter::DecreaseEnergy(int32 Amount)
 	}
 }
 
+void ATitanBotsCharacter::SetArmor(int32 NewArmor)
+{
+    if(NewArmor >= 0 && NewArmor <= GetMaxArmor())
+    {
+        Armor = NewArmor;
+    }
+}
+
+void ATitanBotsCharacter::SetHealth(int32 NewHealth)
+{
+    if(NewHealth >= 0 && NewHealth <=GetMaxHealth())
+    {
+        Health = NewHealth;
+    }
+}
+
+void ATitanBotsCharacter::SetEnergy(int32 NewEnergy)
+{
+	if (NewEnergy >= 0 && NewEnergy <= GetMaxEnergy())
+	{
+		Energy = NewEnergy;
+	}
+}
+
 void ATitanBotsCharacter::SetMaxEnergy(int32 NewMaxEnergy)
 {
 	MaxEnergy = NewMaxEnergy;
@@ -324,31 +323,61 @@ void ATitanBotsCharacter::SetMaxEnergy(int32 NewMaxEnergy)
 
 void ATitanBotsCharacter::SetMaxHealth(int32 NewMaxHealth)
 {
-    if(NewMaxHealth >= 1)
-    {
-        MaxHealth = NewMaxHealth;
-    }
-    else
-    {
-        MaxHealth = 1;
-    }
+	if (NewMaxHealth >= 1)
+	{
+		MaxHealth = NewMaxHealth;
+	}
+	else
+	{
+		MaxHealth = 1;
+	}
 }
 
 void ATitanBotsCharacter::SetMaxArmor(int32 NewMaxArmor)
 {
-    if(NewMaxArmor >= 1)
-    {
-        MaxArmor = NewMaxArmor;
-    }
-    else
-    {
-        MaxArmor = 1;
-    }
+	if (NewMaxArmor >= 1)
+	{
+		MaxArmor = NewMaxArmor;
+	}
+	else
+	{
+		MaxArmor = 1;
+	}
 }
 
 void ATitanBotsCharacter::SetIsInvulnerable(bool Set)
 {
 	bIsInvulnerable = Set;
+}
+
+void ATitanBotsCharacter::SetIsDead(bool Set)
+{
+	bIsDead = Set;
+}
+
+void ATitanBotsCharacter::SetIsSpecial(bool Special)
+{
+	bIsSpecial = Special;
+}
+
+void ATitanBotsCharacter::SetCanDash(bool Set)
+{
+	bCanDash = Set;
+}
+
+void ATitanBotsCharacter::SetIsCoolingDown(bool Set)
+{
+	bIsCoolingDown = Set;
+}
+
+void ATitanBotsCharacter::SetCanFireAgain(bool Set)
+{
+	bCanFireAgain = Set;
+}
+
+void ATitanBotsCharacter::SetIsChargeSpecial(bool Set)
+{
+	bIsChargeSpecial = Set;
 }
 
 float ATitanBotsCharacter::GetHealthPercentage()
@@ -366,41 +395,47 @@ float ATitanBotsCharacter::GetEnergyPercentage()
 	return FMath::GetRangePct(0.f, MaxEnergy, Energy);
 }
 
-bool ATitanBotsCharacter::IsSpecial()
-{
-	return bIsSpecial;
-}
-
-void ATitanBotsCharacter::SetIsSpecial(bool Special)
-{
-	bIsSpecial = Special;
-}
-
 void ATitanBotsCharacter::Dash()
 {
-	//if we are not in the air
-	if (!GetCharacterMovement()->IsFalling())
+	if (CanDash())
 	{
-		//if we are moving
-		if (GetCharacterMovement()->Velocity != FVector(0, 0, 0))
+		//if we are not in the air
+		if (!GetCharacterMovement()->IsFalling())
 		{
-			//Get the rotation, but only control the Yaw value
-			FRotator DashAngle = FRotator(0, GetControlRotation().Yaw, 0);
+			//if we are moving
+			if (GetCharacterMovement()->Velocity != FVector(0, 0, 0))
+			{
+				//Get the rotation, but only control the Yaw value
+				FRotator DashAngle = FRotator(0, GetControlRotation().Yaw, 0);
 
-			FVector DashVector;
-			//Find out which direction we are moving
-			if (AngleY > 0.5f)
-			{
-				DashVector = DashAngle.RotateVector(FVector(0, 5000.f, 0));
+				FVector DashVector;
+				//Find out which direction we are moving
+				if (AngleY > 0.5f)
+				{
+					DashVector = DashAngle.RotateVector(FVector(0, 5000.f, 0));
+				}
+				else if (AngleY < -0.5f)
+				{
+					DashVector = DashAngle.RotateVector(FVector(0, -5000.f, 0));
+				}
+				//Launch the character to simulate Dash
+				LaunchCharacter(DashVector, false, false);
+				DisableDash();
 			}
-			else if (AngleY < -0.5f)
-			{
-				DashVector = DashAngle.RotateVector(FVector(0, -5000.f, 0));
-			}
-			//Launch the character to simulate Dash
-			LaunchCharacter(DashVector, false, false);
 		}
 	}
+}
+
+void ATitanBotsCharacter::DisableDash()
+{
+	SetCanDash(false);
+	GetWorld()->GetTimerManager().SetTimer(DashCooldown, this, &ATitanBotsCharacter::EnableDash, 0.5, false);
+}
+
+void ATitanBotsCharacter::EnableDash()
+{
+	SetCanDash(true);
+	GetWorld()->GetTimerManager().ClearTimer(DashCooldown);
 }
 
 void ATitanBotsCharacter::OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -439,7 +474,7 @@ void ATitanBotsCharacter::LookUpAtRate(float Rate)
 
 void ATitanBotsCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
+	if ((Controller != NULL) && (Value != 0.0f) && (!IsChargeSpecial()))
 	{
 		//Set the X direction for the AngleX value
 		AngleX = Value;
@@ -455,7 +490,7 @@ void ATitanBotsCharacter::MoveForward(float Value)
 
 void ATitanBotsCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ( (Controller != NULL) && (Value != 0.0f) && (!IsChargeSpecial()))
 	{
 		//Set the Y direction for the AngleY value
 		AngleY = Value;

@@ -18,9 +18,6 @@ class TITANBOTS_API AMediumPawn : public ATitanBotsCharacter
 
 private:
 
-	/** Bool to tell whether the pawn is cooling down on energy use*/
-	bool bIsCoolingDown;
-
 public:
 	AMediumPawn();
 
@@ -32,9 +29,6 @@ public:
 	
 	virtual void Tick(float DeltaSeconds) override;
 
-	/**Sets the bool for bIsCoolingDown*/
-	void SetIsCoolingDown(bool Set);
-
 	/**@Override
 	* Drains the Energy for the Medium Pawn
 	*/
@@ -45,11 +39,11 @@ public:
 	*/
 	virtual void RegenerateEnergy() override;
 
-	/**Starts the cooldown for the Energy to replenish*/
-	void CooldownEnergy();
+	/** @Override */
+	virtual void CooldownEnergy() override;
 
-	/**enables energy to be used and replenishes Energy*/
-	void EnableEnergyUse();
+	/** @Override */
+	virtual void EnableEnergyUse() override;
 
 	/**Timer Handle for the Cooldown*/
 	FTimerHandle CooldownHandle;
@@ -62,7 +56,5 @@ public:
 
 	/**Gets the Shield Object that is in the Medium Pawn*/
 	FORCEINLINE UBoxComponent *GetShield() const { return Shield; }
-	/**Gets the bIsCoolingDown bool that is in the Medium Character*/
-	FORCEINLINE bool IsCoolingDown() const { return bIsCoolingDown; }
 	
 };

@@ -23,11 +23,6 @@ void AMediumPawn::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void AMediumPawn::SetIsCoolingDown(bool Set)
-{
-	bIsCoolingDown = Set;
-}
-
 void AMediumPawn::SpecialStart()
 {
 	Super::SpecialStart();
@@ -81,6 +76,7 @@ void AMediumPawn::RegenerateEnergy()
 
 void AMediumPawn::CooldownEnergy()
 {
+	Super::CooldownEnergy();
 	SetIsCoolingDown(true);
 	GetShield()->SetCollisionProfileName("NoCollision");
 	SetIsInvulnerable(false);
@@ -89,6 +85,7 @@ void AMediumPawn::CooldownEnergy()
 
 void AMediumPawn::EnableEnergyUse()
 {
+	Super::EnableEnergyUse();
 	SetIsCoolingDown(false);
 	SetEnergy(GetMaxEnergy());
 }
