@@ -90,6 +90,7 @@ void ALightPawn::EndCharge()
 	if (Proj)
 	{
 		Proj->GetAuraParticle()->SetRelativeScale3D(FVector(ChargeAmount, ChargeAmount, ChargeAmount));
+	Proj->SetDamageAmount(40);
 	}
 	ChargeAmount = 0.f;
 	GetChargeSpawn()->Deactivate();
