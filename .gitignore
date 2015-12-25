@@ -62,3 +62,9 @@ Binaries
 Saved
 .apdisk
 *.sln
+
+*.xml
+
+*.xcsettings
+
+*.xml
