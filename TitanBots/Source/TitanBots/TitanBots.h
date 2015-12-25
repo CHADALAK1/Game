@@ -5,5 +5,7 @@
 
 #include "EngineMinimal.h"
 #include "Engine.h"
+#include "MatchState.h"
+#include "Kismet/GameplayStatics.h"
 
 #endif

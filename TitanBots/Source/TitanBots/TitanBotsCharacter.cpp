@@ -84,7 +84,6 @@ void ATitanBotsCharacter::SetupPlayerInputComponent(class UInputComponent* Input
     InputComponent->BindAction("Action", IE_Released, this, &ATitanBotsCharacter::StopFire);
 	InputComponent->BindAction("Special", IE_Pressed, this, &ATitanBotsCharacter::SpecialStart);
 	InputComponent->BindAction("Special", IE_Released, this, &ATitanBotsCharacter::SpecialStop);
-	InputComponent->BindAction("ExitGame", IE_Pressed, this, &ATitanBotsCharacter::EndGame);
 	InputComponent->BindAction("LockOn", IE_Pressed, this, &ATitanBotsCharacter::LockOn);
 	InputComponent->BindAction("Dash", IE_Pressed, this, &ATitanBotsCharacter::Dash);
 
@@ -134,13 +133,23 @@ void ATitanBotsCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	LockOnLogic();
-}
-
-void ATitanBotsCharacter::EndGame()
-{
-	ATitanBotsGameMode *GM = (ATitanBotsGameMode*)GetWorld()->GetAuthGameMode();
-	GM->CloseNFCTech();
-	GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
+    if(IsDead())
+    {
+        ATitanBotsGameMode *GM = (ATitanBotsGameMode*)GetWorld()->GetAuthGameMode();
+        UMatchState *Result = Cast<UMatchState>(UGameplayStatics::CreateSaveGameObject(UMatchState::StaticClass()));
+        if(GetController()->IsA(AEnemyAIController::StaticClass()))
+        {
+            Result->bPlayerHasWon = true;
+            UGameplayStatics::SaveGameToSlot(Result, Result->SaveSlotName, Result->UserIndex);
+            GM->EndGame();
+        }
+        else
+        {
+            Result->bPlayerHasWon = false;
+            UGameplayStatics::SaveGameToSlot(Result, Result->SaveSlotName, Result->UserIndex);
+            GM->EndGame();
+        }
+    }
 }
 
 void ATitanBotsCharacter::Fire()

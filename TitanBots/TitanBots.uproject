@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.9",
+	"EngineAssociation": "4.10",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -12,6 +12,12 @@
 				"Engine",
 				"AIModule"
 			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "Substance",
+			"Enabled": true
 		}
 	]
 }

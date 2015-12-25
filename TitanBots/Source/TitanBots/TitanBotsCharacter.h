@@ -293,14 +293,15 @@ protected:
     UFUNCTION()
     void OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void EndGame();
-
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
 
 public:
+    
+    /**              ACCESSORS           */
+    
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
@@ -326,7 +327,8 @@ public:
 	/** Gets the bool for bIsInvulnerable for this character*/
 	FORCEINLINE bool IsInvulnerable() const { return bIsInvulnerable; }
 	/** Gets the bool for bIsDead for this character*/
-	FORCEINLINE bool IsDead() const { return bIsDead; }
+    UFUNCTION(BlueprintCallable, Category = Dead)
+    bool IsDead() const { return bIsDead; }
 	/**Get function for the bIsSpecial bool*/
 	FORCEINLINE bool IsSpecial() const { return bIsSpecial; }
 	/**Gets the bIsCoolingDown bool that is in the Medium Character*/

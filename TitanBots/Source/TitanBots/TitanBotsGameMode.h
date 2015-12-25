@@ -28,6 +28,8 @@ public:
     virtual void Tick(float DeltaSeconds) override;
 
 	void CloseNFCTech();
+    
+    void EndGame();
 };
 
 

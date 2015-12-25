@@ -1,0 +1,12 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "TitanBots.h"
+#include "MatchState.h"
+
+
+UMatchState::UMatchState()
+{
+    UserIndex = 0;
+    SaveSlotName = TEXT("MatchSlot");
+}
+

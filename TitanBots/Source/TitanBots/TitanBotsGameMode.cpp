@@ -37,8 +37,10 @@ void ATitanBotsGameMode::Tick(float DeltaSeconds)
     {
         StartMatch();
     }
-    else
-    {
-        EndMatch();
-    }
 }
+
+void ATitanBotsGameMode::EndGame()
+{
+    UGameplayStatics::OpenLevel(this, "Match_Result");
+}
+

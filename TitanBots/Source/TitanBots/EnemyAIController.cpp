@@ -13,20 +13,6 @@ AEnemyAIController::AEnemyAIController()
 	SetClassType(AIClassType::E_AILight);
 }
 
-void AEnemyAIController::Tick(float DeltaSeconds)
-{
-    ATitanBotsCharacter* Char = (ATitanBotsCharacter*)GetControlledPawn();
-    ATitanBotsGameMode* GM = (ATitanBotsGameMode*)GetWorld()->GetAuthGameMode();
-    
-    if(Char)
-    {
-        if(Char->GetHealth() <= 0)
-        {
-            GM->GameType = EGameType::E_MatchEnded;
-        }
-    }
-}
-
 void AEnemyAIController::SetClassType(AIClassType Type)
 {
 	TypeClass = Type;

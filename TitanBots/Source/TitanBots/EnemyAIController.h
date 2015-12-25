@@ -43,7 +43,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Type)
 	void SetClassType(AIClassType Type);
-    
-    virtual void Tick(float DeltaSeconds) override;
 	
 };
