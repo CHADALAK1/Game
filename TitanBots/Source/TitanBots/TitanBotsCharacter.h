@@ -144,7 +144,9 @@ public:
 	*/
 	void SetEnergy(int32 NewEnergy);
 
-	/**Set Function to turn on or off Special*/
+	/**Set Function to turn on or off Special
+     *@param Special Turns on or off bIsSpecial
+     */
 	void SetIsSpecial(bool Special);
     
     /** Sets the new MaxArmor
@@ -152,22 +154,34 @@ public:
      */
     void SetMaxArmor(int32 NewMaxArmor);
 
-	/**Sets the bool bIsInvulnerable*/
+	/**Sets the bool bIsInvulnerable
+     *@param Set Turns on or off bIsInvulnerable
+     */
 	void SetIsInvulnerable(bool Set);
 
-	/**Sets the bool bIsDead*/
+	/**Sets the bool bIsDead
+     *@param Set Turns on or off bIsDead
+     */
 	void SetIsDead(bool Set);
 
-	/** Sets the bool bCanDash*/
+	/** Sets the bool bCanDash
+     *@param Set Turns on or off bCanDash
+     */
 	void SetCanDash(bool Set);
 
-	/**Sets the bool for bIsCoolingDown*/
+	/**Sets the bool for bIsCoolingDown
+     *@param Set  Turns on or off bIsCoolingDown
+     */
 	void SetIsCoolingDown(bool Set);
 
-	/**Sets the bool for bCanFireAgain*/
+	/**Sets the bool for bCanFireAgain
+     *@param Set  Turns on or off bCanFireAgain
+     */
 	void SetCanFireAgain(bool Set);
 
-	/**Sets the bool for bIsChargeSpecial*/
+	/**Sets the bool for bIsChargeSpecial
+     *@param Set turn on or off bIsChargeSpecial
+     */
 	void SetIsChargeSpecial(bool Set);
 
 	/** Drains the Energy for Character(VIRTUAL FUNCTION)*/
@@ -327,8 +341,7 @@ public:
 	/** Gets the bool for bIsInvulnerable for this character*/
 	FORCEINLINE bool IsInvulnerable() const { return bIsInvulnerable; }
 	/** Gets the bool for bIsDead for this character*/
-    UFUNCTION(BlueprintCallable, Category = Dead)
-    bool IsDead() const { return bIsDead; }
+    FORCEINLINE bool IsDead() const { return bIsDead; }
 	/**Get function for the bIsSpecial bool*/
 	FORCEINLINE bool IsSpecial() const { return bIsSpecial; }
 	/**Gets the bIsCoolingDown bool that is in the Medium Character*/
