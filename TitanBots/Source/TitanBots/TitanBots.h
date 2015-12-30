@@ -6,6 +6,7 @@
 #include "EngineMinimal.h"
 #include "Engine.h"
 #include "MatchState.h"
+#include "TitanBotsCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 #endif
