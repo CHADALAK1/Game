@@ -422,13 +422,14 @@ void ATitanBotsCharacter::Dash()
 				//Find out which direction we are moving
 				if (AngleY > 0.5f)
 				{
-					DashVector = DashAngle.RotateVector(FVector(0, 5000.f, 0));
+					DashVector = DashAngle.RotateVector(FVector(0, 3000.f, 0));
 				}
 				else if (AngleY < -0.5f)
 				{
-					DashVector = DashAngle.RotateVector(FVector(0, -5000.f, 0));
+					DashVector = DashAngle.RotateVector(FVector(0, -3000.f, 0));
 				}
 				//Launch the character to simulate Dash
+				bIsDashing = true;
 				LaunchCharacter(DashVector, false, false);
 				DisableDash();
 			}
@@ -445,6 +446,7 @@ void ATitanBotsCharacter::DisableDash()
 void ATitanBotsCharacter::EnableDash()
 {
 	SetCanDash(true);
+	bIsDashing = false;
 	GetWorld()->GetTimerManager().ClearTimer(DashCooldown);
 }
 

@@ -256,6 +256,9 @@ private:
     /** int value that holds the Maximum Armor */
     int32 MaxArmor;
 
+	/** Bool to tell whether the character is currently dashing*/
+	bool bIsDashing;
+
 	/** Bool to tell whether the character can dash or not*/
 	bool bCanDash;
 
@@ -338,6 +341,8 @@ public:
 	FORCEINLINE int32 GetMaxEnergy() const { return MaxEnergy; }
 	/**Gets the bool for bCanDash for this Character*/
 	FORCEINLINE bool CanDash() const { return bCanDash; }
+	/**Gets the bool for bIsDashing for this Character*/
+	FORCEINLINE bool IsDashing() const { return bIsDashing; }
 	/** Gets the bool for bIsInvulnerable for this character*/
 	FORCEINLINE bool IsInvulnerable() const { return bIsInvulnerable; }
 	/** Gets the bool for bIsDead for this character*/

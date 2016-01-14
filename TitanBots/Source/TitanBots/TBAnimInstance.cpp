@@ -9,6 +9,7 @@
 UTBAnimInstance:: UTBAnimInstance()
 {
     bIsInAir = false;
+	bIsDashing = false;
     Speed = 0.f;
     Direction = 0.f;
 }
@@ -27,6 +28,7 @@ void UTBAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     bIsInAir = TBCharacter->GetMovementComponent()->IsFalling();
     bIsDead = TBCharacter->IsDead();
     bIsSpecial = TBCharacter->IsSpecial();
+	bIsDashing = TBCharacter->IsDashing();
     SetDirectionAndSpeed(Direction, Speed);
 }
 

@@ -39,6 +39,12 @@ public:
 	/*Medium Character Class Declaration */
 	TSubclassOf<ATitanBotsCharacter> MediumChar;
 
+	UPROPERTY(EditDefaultsOnly, Category = Instance)
+	UClass *LightAnimInstance;
+
+	UPROPERTY(EditDefaultsOnly, Category = Instance)
+	UClass *MediumAnimInstance;
+
     /** Light Mesh SkeletalMesh to call in the ConstructorHelper ObjectFinder */
 	USkeletalMesh *LightMesh;
     

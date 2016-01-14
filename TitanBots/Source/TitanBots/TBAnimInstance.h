@@ -37,6 +37,9 @@ public:
     
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     uint32 bIsDead : 1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	uint32 bIsDashing : 1;
     
     UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (UIMin = "-180", UIMax = "180", ClampMin = "-180", ClampMax = "180"))
     float Direction;

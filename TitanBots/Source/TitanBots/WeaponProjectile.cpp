@@ -79,7 +79,7 @@ void AWeaponProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp
 			}
 			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "HIT");
 			PlaySound(ExplosionSound);
-			PlayExplosionParticle();
+			//PlayExplosionParticle();
 			Destroy();
 		}
 	}
@@ -89,7 +89,7 @@ void AWeaponProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp
 	}
 	else
 	{
-		PlayExplosionParticle();
+		//PlayExplosionParticle();
 		PlaySound(ExplosionSound);
 		Destroy();
 	}
