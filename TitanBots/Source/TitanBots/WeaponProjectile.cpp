@@ -60,7 +60,7 @@ void AWeaponProjectile::SetDamageAmount(int32 NewAmount)
     }
 }
 
-void AWeaponProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& SweepResult)
+void AWeaponProjectile::OnHit(UPrimitiveComponent* PrimCompAActor, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& SweepResult)
 {
 	ATitanBotsCharacter *Char = Cast<ATitanBotsCharacter>(OtherActor);
 	AWeaponProjectile *Proj = Cast<AWeaponProjectile>(OtherActor);

@@ -58,7 +58,7 @@ void ATitanBotsPlayerController::TCPConnectionListener()
 	FIPv4Address ip;
 	FString address = TEXT("127.0.0.1");
 	FIPv4Address::Parse(address, ip);
-	RemoteAddress->SetIp(ip.GetValue());
+	RemoteAddress->SetIp(ip.Value);
 	RemoteAddress->SetPort(7000);
 
 	//Connect to the 127.0.0.1 7000 Port
@@ -103,7 +103,7 @@ void ATitanBotsPlayerController::TCPSocketListener()
 		uint32 Size;
 		while (ConnectionSocket->HasPendingData(Size))
 		{
-			ReceivedData.Init(FMath::Min(Size, 65507u));
+			ReceivedData.Init(FMath::Min(Size, 65507u), 0);
 
 			int32 Read = 0;
 			ConnectionSocket->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);

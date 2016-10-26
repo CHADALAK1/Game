@@ -308,7 +308,7 @@ protected:
     
     /** Collision for the Collision Box */
     UFUNCTION()
-    void OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult);
+    void OnEnterCollision(UPrimitiveComponent* PrimCompAActor, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	// APawn interface

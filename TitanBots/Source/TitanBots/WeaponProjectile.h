@@ -37,7 +37,7 @@ public:
 
 	/** called when projectile hits something */
 	UFUNCTION()
-		virtual void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& SweepResult);
+		virtual void OnHit(UPrimitiveComponent* PrimCompAActor, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& SweepResult);
 
 	UAudioComponent *PlaySound(USoundCue *Sound);
 

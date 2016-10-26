@@ -450,7 +450,7 @@ void ATitanBotsCharacter::EnableDash()
 	GetWorld()->GetTimerManager().ClearTimer(DashCooldown);
 }
 
-void ATitanBotsCharacter::OnEnterCollision(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ATitanBotsCharacter::OnEnterCollision(UPrimitiveComponent* PrimCompAActor, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	
 }
